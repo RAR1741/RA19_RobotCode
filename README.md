@@ -2,7 +2,7 @@
 Robot code for 2019 FRC competition for team 1741
 
 ## Links
-* [Game Animation]() Soon
+* [Game Animation](https://www.youtube.com/watch?v=Mew6G_og-PI)
 * [Game Manual](https://www.firstinspires.org/resource-library/frc/competition-manual-qa-system)
 
 ---
