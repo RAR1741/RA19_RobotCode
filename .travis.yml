@@ -1,0 +1,37 @@
+language: java
+
+jdk:
+  - oraclejdk11
+
+install:
+  - ./gradlew assemble
+
+before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
+script:
+  - ./gradlew test jacocoTestReport
+after_script:
+  - ./cc-test-reporter format-coverage -t jacoco build/reports/jacoco/test/jacocoTestReport.xml
+  - ./cc-test-reporter upload-coverage
+
+branches:
+  only:
+    - master
+
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+
+env:
+  global:
+    - CC_TEST_REPORTER_ID=f7401ac44d15e64e88244daa80670528e2d3e589a1aa8827173ee3135508a95c
+
+notifications:
+  slack:
+    secure:
