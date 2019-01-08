@@ -1,0 +1,38 @@
+language: java
+
+jdk:
+  - oraclejdk11
+
+install:
+  - ./gradlew assemble
+
+before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
+script:
+  - ./gradlew test jacocoTestReport
+after_script:
+  - JACOCO_SOURCE_PATH=src/main/java ./cc-test-reporter format-coverage -t jacoco build/reports/jacoco/test/jacocoTestReport.xml
+  - ./cc-test-reporter upload-coverage
+
+branches:
+  only:
+    - master
+
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+
+env:
+  global:
+    - CC_TEST_REPORTER_ID=f7401ac44d15e64e88244daa80670528e2d3e589a1aa8827173ee3135508a95c
+
+notifications:
+  slack:
+    secure:
+      Lac5cVYVZP/ZIJMdEvi/j0kVimWIPps0j0n6bSazcQd7eEq0ATIfR2gYnMYx6BFj5sKjcjhb7IYFLXgeoU70VacN1ZCfBzmKsuz0C0IMvIXXRkICXk8efbfAbJue4kb9Onj86fmtEjGUlMikhuTklql8I6c2To646Fv1Pddd28K1cihZ0RidGVGPpwjcPhQ4WVaXw0g6omBCZp23XBRVRH0abgZUkg47CRWBaYez5V+XVzm6eE3q7vq7T1570f7zwLK9mucbFGu49/xhfhqwmCDFdVtAjpw2HUAwManjXo5NMFhPZVL0WPOF0Qli4dlAY3om4o91DtaCo8R335HzPh9635jPoqPwNKcSOJsLnZHr4hlU/vH3q2eGUunQO9/KLkP0E8haeVBdAphEXWDVMR91hrm1YpreWrREot94bOmO1YXsqcE+U7IkIDqBBEODfvULMeNbgxDyKEeNLA9Wyef0XuDb+hbfomhMKXYPCqYiCHpSlAOmQocafmytiFU1l3MeEqFFqR+NvcL6+ehDQ+4ce1MENXX+crPSGPu9GPloT5owUToJ5r8IbEYwUbUNvGQHcynlOGRG+TVAvT3plTKIcFiuxCqaCLrZQYtSYMTxzgZwehz1xWHdnQXR350wFpLo4i7sheotG+Si5sqvwlVX+6baFG62xMWP2BdoKYI=
