@@ -9,38 +9,46 @@ import edu.wpi.first.wpilibj.I2C;
 import java.nio.ByteBuffer;
 
 public class Lidar {
+  // I2C device handle
   private I2C device;
 
-  public Lidar(I2C.Port port) {
-    this(port, 0x62);
+  // Places to receive I2C responses to transactions
+  private ByteBuffer statusBuffer = ByteBuffer.allocate(1);
+  private ByteBuffer measurementBuffer = ByteBuffer.allocate(2);
+
+  public Lidar(I2C handle) {
+    this.device = handle;
   }
-  public Lidar(I2C.Port port, int deviceAddress) {
-    device = new I2C(port, deviceAddress);
-  }
+
+  private static final byte REGISTER_ACQ_COMMAND = 0x00;
+  private static final byte REGISTER_STATUS = 0x01;
+  private static final byte REGISTER_FULL_DELAY_HIGH = 0x0f;
+
+  // Setting the most significant bit of the address byte turns on 
+  // auto-incrementing of addresses for reads and writes in a single transfer.
+  private static final byte AUTO_INCREMENT_MASK = (byte) 0x80;
 
   /**
-   * Utility method for debugging 
+   * Query LIDAR and measure the distance to the target in cm.
+   * @return distance to target in centimeters
    */
-  void debug() {
-    // This *should* be the simple way to get distance
-    device.write(0x00, 0x04);
+  public int getDistanceInCentimeters() {
+    // 1. Write command to take a new measurement to the command register.
+    device.write(REGISTER_ACQ_COMMAND, 0x04);
+
+    // 2. Read the status register, and poll it until it bit 0 "goes low"
     boolean done = false;
-    // These should be instance variables to avoid constantly allocating
-    // tiny arrays.
-    ByteBuffer statusBuffer = ByteBuffer.allocate(1);
-    ByteBuffer measurementBuffer = ByteBuffer.allocate(2);
 
     while (!done) {
-      device.read(0x01, 1, statusBuffer);
+      device.read(REGISTER_STATUS, 1, statusBuffer);
       
       if (statusBuffer.get(0) == 0) {
         done = true;
       }
-
-      // TODO: Sleep or something
     }
 
-    device.read(0x8f, 2, measurementBuffer);
-    System.out.printf("Distance = %d cm", measurementBuffer.getShort());
+    // 3. Read two bytes from the measurement register and treat them as a 16-bit CM distance.
+    device.read(REGISTER_FULL_DELAY_HIGH | AUTO_INCREMENT_MASK & 0xff, 2, measurementBuffer);
+    return measurementBuffer.getShort();
   }
 }
