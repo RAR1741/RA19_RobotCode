@@ -59,7 +59,6 @@ public class Robot extends TimedRobot {
         ds2 = new DoubleSolenoid(2, 3);
         ds3 = new DoubleSolenoid(4, 5);
         ds4 = new DoubleSolenoid(6, 7);
-        ds1.set(DoubleSolenoid.Value.kForward);
 
         xbc = new XboxController(0);
 
@@ -119,35 +118,35 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void teleopPeriodic() {
-        if (xbc.getXButton()) {
+        if (xbc.getXButtonPressed()) {
             xButtonState = !xButtonState;
             if (xButtonState) {
                 ds1.set(DoubleSolenoid.Value.kForward);
             } else {
                 ds1.set(DoubleSolenoid.Value.kReverse);
             }
-        } else if (xbc.getAButton()) {
+        } else if (xbc.getAButtonPressed()) {
             aButtonState = !aButtonState;
             if (aButtonState) {
                 ds2.set(DoubleSolenoid.Value.kForward);
             } else {
                 ds2.set(DoubleSolenoid.Value.kReverse);
             }
-        } else if (xbc.getBButton()) {
+        } else if (xbc.getBButtonPressed()) {
             bButtonState = !bButtonState;
             if (bButtonState) {
                 ds3.set(DoubleSolenoid.Value.kForward);
             } else {
                 ds3.set(DoubleSolenoid.Value.kReverse);
             }
-        } else if (xbc.getYButton()) {
+        } else if (xbc.getYButtonPressed()) {
             yButtonState = !yButtonState;
             if (yButtonState) {
                 ds4.set(DoubleSolenoid.Value.kForward);
             } else {
                 ds4.set(DoubleSolenoid.Value.kReverse);
             }
-        } else if (xbc.getBumper(Hand.kRight)) {
+        } else if (xbc.getBumperPressed(Hand.kRight)) {
             bumperButtonState = !bumperButtonState;
             if (bumperButtonState) {
                 ds1.set(DoubleSolenoid.Value.kForward);
