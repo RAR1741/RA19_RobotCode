@@ -8,7 +8,9 @@ public class PressureSensor {
     this.input = input;
   }
 
-  public float getPressure() {
-    return 0.0f;
+  private static final double SUPPLY_VOLTAGE = 5.0;
+
+  public double getPressure() {
+    return 250.0 * input.getVoltage() / SUPPLY_VOLTAGE + 25.0;
   }
 }
