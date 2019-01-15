@@ -8,9 +8,15 @@ public class PressureSensor {
     this.input = input;
   }
 
-  private static final double SUPPLY_VOLTAGE = 5.0;
+  private static final double VOLTAGE_AT_EMPTY = 0.50;
+  private static final double VOLTAGE_AT_FULL = 2.70;
+  private static final double MAX_PRESSURE = 120.0;
 
   public double getPressure() {
-    return 250.0 * input.getVoltage() / SUPPLY_VOLTAGE + 25.0;
+    double voltage = input.getVoltage();
+    double range = VOLTAGE_AT_FULL - VOLTAGE_AT_EMPTY;
+    double pressure = (voltage - VOLTAGE_AT_EMPTY) * MAX_PRESSURE / range;
+
+    return pressure;
   }
 }
