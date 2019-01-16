@@ -30,13 +30,13 @@ public class PressureSensorTest {
   public void testGetPressureFull() {
     AnalogInput fakeInput = getFakeInput(2.70);
     PressureSensor sensor = new PressureSensor(fakeInput);
-    assertEquals(120.0, sensor.getPressure(), TOLERANCE);
+    assertEquals(110.0, sensor.getPressure(), TOLERANCE);
   }
 
   @Test
   public void testGetPressureHalf() {
     AnalogInput fakeInput = getFakeInput(1.6);
     PressureSensor sensor = new PressureSensor(fakeInput);
-    assertEquals(60.0, sensor.getPressure(), TOLERANCE);
+    assertEquals(55.0, sensor.getPressure(), TOLERANCE);
   }
 }

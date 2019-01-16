@@ -10,7 +10,7 @@ public class PressureSensor {
 
   private static final double VOLTAGE_AT_EMPTY = 0.50;
   private static final double VOLTAGE_AT_FULL = 2.70;
-  private static final double MAX_PRESSURE = 120.0;
+  private static final double MAX_PRESSURE = 110.0;
 
   public double getPressure() {
     double voltage = input.getVoltage();
