@@ -34,12 +34,16 @@ public class Robot extends TimedRobot {
     private DoubleSolenoid ds2;
     private DoubleSolenoid ds3;
     private DoubleSolenoid ds4;
+    private DoubleSolenoid ds5;
+    private DoubleSolenoid ds6;
     private XboxController xbc;
     private boolean xButtonState = false;
     private boolean aButtonState = false;
     private boolean bButtonState = false;
     private boolean yButtonState = false;
     private boolean bumperButtonState = false;
+    private boolean startButtonState = false;
+    private boolean backButtonState = false;
     private DigitalInput left;
     private DigitalInput middle;
     private DigitalInput right;
@@ -57,10 +61,13 @@ public class Robot extends TimedRobot {
 
         compressor = new Compressor();
         compressor.start();
-        ds1 = new DoubleSolenoid(0, 1);
-        ds2 = new DoubleSolenoid(2, 3);
-        ds3 = new DoubleSolenoid(4, 5);
-        ds4 = new DoubleSolenoid(6, 7);
+        ds1 = new DoubleSolenoid(0, 0, 1);
+        ds2 = new DoubleSolenoid(0, 2, 3);
+        ds3 = new DoubleSolenoid(0, 4, 5);
+        ds4 = new DoubleSolenoid(0, 6, 7);
+
+        ds5 = new DoubleSolenoid(1, 0, 1);
+        ds6 = new DoubleSolenoid(1, 2, 3);
 
         xbc = new XboxController(0);
 
@@ -151,6 +158,20 @@ public class Robot extends TimedRobot {
             } else {
                 ds4.set(DoubleSolenoid.Value.kReverse);
             }
+        } else if (xbc.getStartButtonPressed()) {
+            startButtonState = !startButtonState;
+            if (startButtonState) {
+                ds5.set(DoubleSolenoid.Value.kForward);
+            } else {
+                ds5.set(DoubleSolenoid.Value.kReverse);
+            }
+        } else if (xbc.getBackButtonPressed()) {
+            backButtonState = !backButtonState;
+            if (backButtonState) {
+                ds6.set(DoubleSolenoid.Value.kForward);
+            } else {
+                ds6.set(DoubleSolenoid.Value.kReverse);
+            }
         } else if (xbc.getBumperPressed(Hand.kRight)) {
             bumperButtonState = !bumperButtonState;
             if (bumperButtonState) {
@@ -158,11 +179,15 @@ public class Robot extends TimedRobot {
                 ds2.set(DoubleSolenoid.Value.kForward);
                 ds3.set(DoubleSolenoid.Value.kForward);
                 ds4.set(DoubleSolenoid.Value.kForward);
+                ds5.set(DoubleSolenoid.Value.kForward);
+                ds6.set(DoubleSolenoid.Value.kForward);
             } else {
                 ds1.set(DoubleSolenoid.Value.kReverse);
                 ds2.set(DoubleSolenoid.Value.kReverse);
                 ds3.set(DoubleSolenoid.Value.kReverse);
                 ds4.set(DoubleSolenoid.Value.kReverse);
+                ds5.set(DoubleSolenoid.Value.kReverse);
+                ds6.set(DoubleSolenoid.Value.kReverse);
             }
         }
     }
