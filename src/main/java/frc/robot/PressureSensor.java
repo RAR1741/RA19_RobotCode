@@ -4,8 +4,8 @@ import edu.wpi.first.wpilibj.AnalogInput;
 
 public class PressureSensor {
   AnalogInput input;
-  public PressureSensor(AnalogInput input)
-  {
+
+  public PressureSensor(AnalogInput input) {
     this.input = input;
   }
 
