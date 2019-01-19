@@ -103,7 +103,15 @@ public class Robot extends TimedRobot {
 
         pressureSensor = new PressureSensor(new AnalogInput(0));
 
-        visionThread = new VisionThread(camera, new MyVisionPipeline(), pipeline -> {});
+        visionThread = new VisionThread(camera, new MyVisionPipeline(), pipeline -> {
+            if (!pipeline.filterContoursOutput().isEmpty()) {
+                Rect r = Imgproc.boundingRect(pipeline.filterContoursOutput().get(0));
+                synchronized (imgLock) {
+                    centerX = r.x + (r.width / 2);
+                    System.out.println("Camera: " + centerX);
+                }
+            }
+        });
         visionThread.start();
     }
 
