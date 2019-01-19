@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.HashMap;
 
-import edu.wpi.first.wpilibj.vision.VisionPipeline;
+import edu.wpi.first.vision.VisionPipeline;
 
 import org.opencv.core.*;
 import org.opencv.core.Core.*;
