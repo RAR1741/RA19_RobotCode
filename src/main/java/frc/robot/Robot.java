@@ -7,6 +7,11 @@
 
 package frc.robot;
 
+import frc.vision.*;
+
+import org.opencv.core.Rect;
+import org.opencv.imgproc.Imgproc;
+
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.Compressor;
@@ -17,6 +22,9 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.vision.VisionRunner;
+import edu.wpi.first.vision.VisionRunner.Listener;
+import edu.wpi.first.vision.VisionThread;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -51,6 +59,12 @@ public class Robot extends TimedRobot {
     private DigitalInput middle;
     private DigitalInput right;
 
+	
+	private VisionThread visionThread;
+	private double centerX = 0.0;
+	
+	private final Object imgLock = new Object();
+
     /**
      * This function is run when the robot is first started up and should be used
      * for any initialization code.
@@ -81,6 +95,9 @@ public class Robot extends TimedRobot {
 
         UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
         camera.setResolution(640, 480);
+
+        visionThread = new VisionThread(camera, new MyVisionPipeline(), pipeline -> {});
+        visionThread.start();
     }
 
     /**
