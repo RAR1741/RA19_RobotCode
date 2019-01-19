@@ -3,8 +3,13 @@ package frc.robot;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+/**
+ * Drivetrain class for the 2019 robot drivetrain.
+ * @author iCodeCoolStuff
+ */
 public class Drivetrain {
     
+    /**{@value #DEADBAND_LIMIT} The limit for when to stop the motor running if the motor speed is too low.*/
     private final double DEADBAND_LIMIT = 0.02;
 
     private WPI_TalonSRX leftTalon;
@@ -12,11 +17,19 @@ public class Drivetrain {
     private WPI_TalonSRX rightTalon;
     private WPI_TalonSRX rightSlave;
 
-    Drivetrain() {
-        leftTalon  = new WPI_TalonSRX(0);
-        leftSlave  = new WPI_TalonSRX(1);
-        rightTalon = new WPI_TalonSRX(2);
-        rightSlave = new WPI_TalonSRX(3);
+    /**
+     * Constructor
+     *
+     * @param leftTalon1Id  The CAN id of the first left talon.
+     * @param leftTalon2Id  The CAN id of the second left talon.
+     * @param rightTalon1Id The CAN id of the first right talon.
+     * @param rightTalon2Id The CAN id of the second right talon.
+     */
+    Drivetrain(leftTalon1Id, leftTalon2Id, rightTalon1Id, rightTalon2Id) {
+        leftTalon  = new WPI_TalonSRX(leftTalon1Id);
+        leftSlave  = new WPI_TalonSRX(leftTalon2Id);
+        rightTalon = new WPI_TalonSRX(rightTalon1Id);
+        rightSlave = new WPI_TalonSRX(rightTalon2Id);
 
         leftSlave.follow(leftTalon);
         rightSlave.follow(rightTalon);
