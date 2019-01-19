@@ -1,5 +1,9 @@
 # Created by https://www.gitignore.io/api/c++,java,linux,macos,gradle,windows,visualstudiocode
 
+# logs
+logs/
+
+
 ### C++ ###
 # Prerequisites
 *.d
