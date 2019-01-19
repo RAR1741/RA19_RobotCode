@@ -7,8 +7,8 @@
 
 package frc.robot;
 
-import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -79,7 +79,7 @@ public class Robot extends TimedRobot {
 
         left = new DigitalInput(1);
 
-        UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
+        camera = CameraServer.getInstance().startAutomaticCapture();
         camera.setResolution(640, 480);
     }
 
