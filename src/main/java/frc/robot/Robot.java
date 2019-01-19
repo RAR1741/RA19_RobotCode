@@ -30,6 +30,8 @@ public class Robot extends TimedRobot {
     private static final String kCustomAuto = "My Auto";
     private String m_autoSelected;
     private final SendableChooser<String> m_chooser = new SendableChooser<>();
+    private final int IMG_WIDTH = 640;
+    private final int IMG_HEIGHT = 480;
     private UsbCamera camera;
     private Compressor compressor;
     private DoubleSolenoid ds1;
@@ -80,7 +82,7 @@ public class Robot extends TimedRobot {
         left = new DigitalInput(1);
 
         camera = CameraServer.getInstance().startAutomaticCapture();
-        camera.setResolution(640, 480);
+        camera.setResolution(IMG_WIDTH, IMG_HEIGHT);
     }
 
     /**
