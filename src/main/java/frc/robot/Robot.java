@@ -9,8 +9,10 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -46,6 +48,7 @@ public class Robot extends TimedRobot {
     private DigitalInput left;
     private DigitalInput middle;
     private DigitalInput right;
+    private Lidar lidar;
 
     /**
      * This function is run when the robot is first started up and should be used
@@ -70,6 +73,8 @@ public class Robot extends TimedRobot {
         xbc = new XboxController(0);
 
         left = new DigitalInput(1);
+
+        lidar = new Lidar(new I2C(Port.kOnboard, 0x62));
     }
 
     /**
@@ -125,6 +130,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void teleopPeriodic() {
+      System.out.println(String.format("LIDAR: %d", lidar.getDistanceInCentimeters()));
         if (xbc.getXButtonPressed()) {
             xButtonState = !xButtonState;
             if (xButtonState) {
