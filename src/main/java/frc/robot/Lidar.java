@@ -41,13 +41,17 @@ public class Lidar {
 
     while (!done) {
       device.read(REGISTER_STATUS, 1, statusBuffer);
-      
-      if (statusBuffer.get(0) == 0) {
+
+      byte result = statusBuffer.get(0);
+      statusBuffer.rewind();
+
+      if ((result & 0x01) == 0) {
         done = true;
       }
     }
 
     // 3. Read two bytes from the measurement register and treat them as a 16-bit CM distance.
+    measurementBuffer.rewind();
     device.read(REGISTER_FULL_DELAY_HIGH | AUTO_INCREMENT_MASK & 0xff, 2, measurementBuffer);
     return measurementBuffer.getShort();
   }
