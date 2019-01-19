@@ -7,6 +7,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -28,6 +30,7 @@ public class Robot extends TimedRobot {
     private static final String kCustomAuto = "My Auto";
     private String m_autoSelected;
     private final SendableChooser<String> m_chooser = new SendableChooser<>();
+    private UsbCamera camera;
     private Compressor compressor;
     private DoubleSolenoid ds1;
     private DoubleSolenoid ds2;
@@ -35,6 +38,7 @@ public class Robot extends TimedRobot {
     private DoubleSolenoid ds4;
     private DoubleSolenoid ds5;
     private DoubleSolenoid ds6;
+    private DoubleSolenoid ledLights;
     private XboxController xbc;
     private boolean xButtonState = false;
     private boolean aButtonState = false;
@@ -66,10 +70,17 @@ public class Robot extends TimedRobot {
 
         ds5 = new DoubleSolenoid(1, 0, 1);
         ds6 = new DoubleSolenoid(1, 2, 3);
+        
+        ledLights = new DoubleSolenoid(1, 4, 5);
+        ledLights.set(DoubleSolenoid.Value.kForward);
+
 
         xbc = new XboxController(0);
 
         left = new DigitalInput(1);
+
+        UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
+        camera.setResolution(640, 480);
     }
 
     /**
