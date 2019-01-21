@@ -7,6 +7,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -46,6 +47,7 @@ public class Robot extends TimedRobot {
     private DigitalInput left;
     private DigitalInput middle;
     private DigitalInput right;
+    private PressureSensor pressureSensor;
 
     /**
      * This function is run when the robot is first started up and should be used
@@ -70,6 +72,8 @@ public class Robot extends TimedRobot {
         xbc = new XboxController(0);
 
         left = new DigitalInput(1);
+
+        pressureSensor = new PressureSensor(new AnalogInput(0));
     }
 
     /**
@@ -125,6 +129,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void teleopPeriodic() {
+      System.out.println(String.format("Pressure: %2.2f", pressureSensor.getPressure()));
         if (xbc.getXButtonPressed()) {
             xButtonState = !xButtonState;
             if (xButtonState) {
