@@ -41,6 +41,7 @@ def includeDesktopSupport = true
 // Maven central needed for JUnit
 repositories {
     mavenCentral()
+    jcenter()
 }
 
 // Defining my dependencies. In this case, WPILib (+ friends), and vendor libraries.
@@ -51,6 +52,7 @@ dependencies {
     nativeZip wpi.deps.vendor.jni(wpi.platforms.roborio)
     nativeDesktopZip wpi.deps.vendor.jni(wpi.platforms.desktop)
     testCompile 'junit:junit:4.12'
+    testImplementation 'org.mockito:mockito-core:2.23.4'
 }
 
 // Setting up my Jar File. In this case, adding all libraries into the main jar ('fat jar')

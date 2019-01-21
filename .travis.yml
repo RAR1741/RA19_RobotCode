@@ -1,7 +1,7 @@
 language: java
 
 jdk:
-  - oraclejdk11
+  - openjdk11
 
 install:
   - ./gradlew assemble
@@ -30,7 +30,7 @@ cache:
 
 env:
   global:
-    - CC_TEST_REPORTER_ID=f7401ac44d15e64e88244daa80670528e2d3e589a1aa8827173ee3135508a95c
+    - CC_TEST_REPORTER_ID=8d41fdd063caf9031d95198502ac1ee1c821d9235deb0be74c51544cc09249ef
 
 notifications:
   slack:
