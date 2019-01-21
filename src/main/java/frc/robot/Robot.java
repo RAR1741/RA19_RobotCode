@@ -14,6 +14,7 @@ import org.opencv.imgproc.Imgproc;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -22,8 +23,6 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.vision.VisionRunner;
-import edu.wpi.first.vision.VisionRunner.Listener;
 import edu.wpi.first.vision.VisionThread;
 
 /**
@@ -38,6 +37,8 @@ public class Robot extends TimedRobot {
     private static final String kCustomAuto = "My Auto";
     private String m_autoSelected;
     private final SendableChooser<String> m_chooser = new SendableChooser<>();
+    private final int IMG_WIDTH = 640;
+    private final int IMG_HEIGHT = 480;
     private UsbCamera camera;
     private Compressor compressor;
     private DoubleSolenoid ds1;
@@ -58,6 +59,13 @@ public class Robot extends TimedRobot {
     private DigitalInput left;
     private DigitalInput middle;
     private DigitalInput right;
+    private PressureSensor pressureSensor;
+
+
+	private VisionThread visionThread;
+	private double centerX = 0.0;
+
+	private final Object imgLock = new Object();
 
 	
 	private VisionThread visionThread;
@@ -84,7 +92,7 @@ public class Robot extends TimedRobot {
 
         ds5 = new DoubleSolenoid(1, 0, 1);
         ds6 = new DoubleSolenoid(1, 2, 3);
-        
+
         ledLights = new DoubleSolenoid(1, 4, 5);
         ledLights.set(DoubleSolenoid.Value.kForward);
 
@@ -93,8 +101,10 @@ public class Robot extends TimedRobot {
 
         left = new DigitalInput(1);
 
-        UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
-        camera.setResolution(640, 480);
+        camera = CameraServer.getInstance().startAutomaticCapture();
+        camera.setResolution(IMG_WIDTH, IMG_HEIGHT);
+
+        pressureSensor = new PressureSensor(new AnalogInput(0));
 
         visionThread = new VisionThread(camera, new MyVisionPipeline(), pipeline -> {
             if (!pipeline.filterContoursOutput().isEmpty()) {
@@ -161,6 +171,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void teleopPeriodic() {
+      System.out.println(String.format("Pressure: %2.2f", pressureSensor.getPressure()));
         if (xbc.getXButtonPressed()) {
             xButtonState = !xButtonState;
             if (xButtonState) {

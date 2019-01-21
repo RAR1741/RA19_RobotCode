@@ -158,3 +158,13 @@ bin/
 
 
 # End of https://www.gitignore.io/api/c++,java,linux,macos,gradle,windows,visualstudiocode
+
+# Ignore Swap Files
+*.swp
+
+# Ignore local gradle.properties file. To use gradle locally if you have Windows, try
+# putting this in a gradle.properties file in the root of this repository: 
+# 
+# org.gradle.java.home=C:\\Users\\Public\\frc2019\\jdk
+#
+gradle.properties
