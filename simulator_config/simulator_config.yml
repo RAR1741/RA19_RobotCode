@@ -6,18 +6,13 @@ mDefaultI2CWrappers: {}
 mDefaultSpiWrappers: {}
 mDigitalIO:
 - mHandle: 1
-  mName: Digital IO 1
+  mName: Digital 1
   mType: com.snobot.simulator.module_wrapper.wpi.WpiDigitalIoWrapper
 mEncoders: []
 mGyros: []
 mPwm: []
 mRelays: []
-mSimulatorComponents:
-- !!com.snobot.simulator.simulator_components.config.TankDriveConfig
-  mGyroHandle: 0
-  mLeftMotorHandle: 0
-  mRightMotorHandle: 0
-  mTurnKp: 1.0
+mSimulatorComponents: []
 mSolenoids:
 - mHandle: 0
   mName: Solenoid 0
