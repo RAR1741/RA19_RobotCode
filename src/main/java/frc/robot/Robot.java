@@ -21,9 +21,8 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.vision.VisionThread;
+import java.util.logging.Logger;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -33,10 +32,8 @@ import edu.wpi.first.vision.VisionThread;
  * project.
  */
 public class Robot extends TimedRobot {
-    private static final String kDefaultAuto = "Default";
-    private static final String kCustomAuto = "My Auto";
-    private String m_autoSelected;
-    private final SendableChooser<String> m_chooser = new SendableChooser<>();
+    private static final Logger logger = Logger.getLogger(Robot.class.getName());
+
     private final int IMG_WIDTH = 640;
     private final int IMG_HEIGHT = 480;
     private UsbCamera camera;
@@ -79,9 +76,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotInit() {
-        m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
-        m_chooser.addOption("My Auto", kCustomAuto);
-        SmartDashboard.putData("Auto choices", m_chooser);
+        logger.info("Initializing robot...");
 
         compressor = new Compressor();
         compressor.start();
@@ -116,6 +111,7 @@ public class Robot extends TimedRobot {
             }
         });
         visionThread.start();
+        logger.info("Robot initialized.");
     }
 
     /**
@@ -129,6 +125,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotPeriodic() {
+        // This shouldn't be used yet.
     }
 
     /**
@@ -145,9 +142,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void autonomousInit() {
-        m_autoSelected = m_chooser.getSelected();
-        // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
-        System.out.println("Auto selected: " + m_autoSelected);
+        logger.info("Entering autonomous mode.");
     }
 
     /**
@@ -155,15 +150,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void autonomousPeriodic() {
-        switch (m_autoSelected) {
-        case kCustomAuto:
-            // Put custom auto code here
-            break;
-        case kDefaultAuto:
-        default:
-            // Put default auto code here
-            break;
-        }
+        // Run autonomous code (state machines, etc.)
     }
 
     /**
@@ -171,7 +158,8 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void teleopPeriodic() {
-      System.out.println(String.format("Pressure: %2.2f", pressureSensor.getPressure()));
+        // Run teleop code (interpreting input, etc.)
+        System.out.println(String.format("Pressure: %2.2f", pressureSensor.getPressure()));
         if (xbc.getXButtonPressed()) {
             xButtonState = !xButtonState;
             if (xButtonState) {
@@ -239,5 +227,6 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void testPeriodic() {
+        // This isn't typically used in our programs.
     }
 }
