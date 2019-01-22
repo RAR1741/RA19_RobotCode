@@ -7,8 +7,13 @@
 
 package frc.robot;
 
-import edu.wpi.cscore.UsbCamera;
+import frc.vision.*;
+
+import org.opencv.core.Rect;
+import org.opencv.imgproc.Imgproc;
+
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -16,6 +21,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.vision.VisionThread;
 import java.util.logging.Logger;
 
 /**
@@ -52,6 +58,11 @@ public class Robot extends TimedRobot {
     private DigitalInput right;
     private PressureSensor pressureSensor;
 
+	private VisionThread visionThread;
+	private double centerX = 0.0;
+
+	private final Object imgLock = new Object();
+
     /**
      * This function is run when the robot is first started up and should be used
      * for any initialization code.
@@ -80,8 +91,19 @@ public class Robot extends TimedRobot {
 
         camera = CameraServer.getInstance().startAutomaticCapture();
         camera.setResolution(IMG_WIDTH, IMG_HEIGHT);
+
         pressureSensor = new PressureSensor(new AnalogInput(0));
 
+        visionThread = new VisionThread(camera, new MyVisionPipeline(), pipeline -> {
+            if (!pipeline.filterContoursOutput().isEmpty()) {
+                Rect r = Imgproc.boundingRect(pipeline.filterContoursOutput().get(0));
+                synchronized (imgLock) {
+                    centerX = r.x + (r.width / 2);
+                    System.out.println("Camera: " + centerX);
+                }
+            }
+        });
+        visionThread.start();
         logger.info("Robot initialized.");
     }
 
