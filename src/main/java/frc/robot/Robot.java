@@ -58,16 +58,9 @@ public class Robot extends TimedRobot {
     private DigitalInput right;
     private PressureSensor pressureSensor;
 
-
 	private VisionThread visionThread;
 	private double centerX = 0.0;
 
-	private final Object imgLock = new Object();
-
-	
-	private VisionThread visionThread;
-	private double centerX = 0.0;
-	
 	private final Object imgLock = new Object();
 
     /**
