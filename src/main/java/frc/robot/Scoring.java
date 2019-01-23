@@ -9,19 +9,22 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
  */
 public class Scoring {
     private WPI_TalonSRX rollerTalon;
+    private WPI_TalonSRX rotaterTalon;
     private DoubleSolenoid pushers;
 
     /**
      * Constructor
      * 
      * @param rollerCanId     The CAN id of the talon for the roller motor
+     * @param rotateCanId     The CAN id of the talon for the rotater motor
      * @param pushersCanId    The CAN id of the pcm for the pushers
      * @param pushersChannel1 The channel number of the forward channel for the pushers
      * @param pushersChannel2 The channel number of the reverse channel for the pushers
      */
-    Scoring(int rollerCanId, int pushersCanId, int pushersChannel1, int pushersChannel2) {
-        rollerTalon = new WPI_TalonSRX(rollerCanId);
-        pushers     = new DoubleSolenoid(pushersCanId, pushersChannel1, pushersChannel2);
+    Scoring(int rollerCanId, int rotaterCanId, int pushersCanId, int pushersChannel1, int pushersChannel2) {
+        rollerTalon    = new WPI_TalonSRX(rollerCanId);
+        rotaterTalon   = new WPI_TalonSRX(rotaterCanId);
+        pushers        = new DoubleSolenoid(pushersCanId, pushersChannel1, pushersChannel2);
     }
 
     /**
@@ -44,5 +47,13 @@ public class Scoring {
      */
     public void retract() {
         pushers.set(DoubleSolenoid.Value.kReverse);
+    }
+
+    /**
+     * Rotates the rotater
+     * @param speed the speed to rotate the rotater (ranges from -1.0 to 1.0)
+     */
+    public void rotate(double speed) {
+        rotaterTalon.set(ControlMode.PercentOutput, speed);
     }
 }
