@@ -22,9 +22,9 @@ public class Scoring {
      * @param pushersChannel2 The channel number of the reverse channel for the pushers
      */
     Scoring(int rollerCanId, int rotaterCanId, int pushersCanId, int pushersChannel1, int pushersChannel2) {
-        rollerTalon    = new WPI_TalonSRX(rollerCanId);
-        rotaterTalon   = new WPI_TalonSRX(rotaterCanId);
-        pushers        = new DoubleSolenoid(pushersCanId, pushersChannel1, pushersChannel2);
+        rollerTalon  = new WPI_TalonSRX(rollerCanId);
+        rotaterTalon = new WPI_TalonSRX(rotaterCanId);
+        pushers      = new DoubleSolenoid(pushersCanId, pushersChannel1, pushersChannel2);
     }
 
     /**
