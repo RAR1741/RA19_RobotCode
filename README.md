@@ -1,7 +1,7 @@
 # RA19_RobotCode
 Robot code for 2019 FRC competition for team 1741
 
-See [develpoment setup](docs/development_setup.md)
+See [development setup](docs/development_setup.md)
 
 ## Links
 * [Game Animation](https://www.youtube.com/watch?v=Mew6G_og-PI)
