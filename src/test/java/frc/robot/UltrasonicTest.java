@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.*;
 public class UltrasonicTest{
   // Floating point math is inexeact, agreeing to 1x10^-3 should be
   // good enough.
-  private static final double TOLERANCE = 1e-3;
+  private static final double TOLERANCE = 1e-2;
 
   private AnalogInput getFakeInput(double voltageToReturn) {
     AnalogInput fakeInput = mock(AnalogInput.class);
@@ -20,23 +20,16 @@ public class UltrasonicTest{
   }
 
   @Test
-  public void testGetDistanceNone() {
-    AnalogInput fakeInput = getFakeInput(0);
+  public void testReference1() {
+    AnalogInput fakeInput = getFakeInput(0.293);
     UltrasonicSensor sensor = new UltrasonicSensor(fakeInput);
-    assertEquals(0.0, sensor.getDistance(), TOLERANCE);
+    assertEquals(30.00, sensor.getDistance(), TOLERANCE);
   }
 
   @Test
-  public void testGetDistanceMid() {
-    AnalogInput fakeInput = getFakeInput(2.5);
+  public void testReference2() {
+    AnalogInput fakeInput = getFakeInput(4.885);
     UltrasonicSensor sensor = new UltrasonicSensor(fakeInput);
-    assertEquals(1.25, sensor.getDistance(), TOLERANCE);
-  }
-
-  @Test
-  public void testGetDistanceFull() {
-    AnalogInput fakeInput = getFakeInput(5.0);
-    UltrasonicSensor sensor = new UltrasonicSensor(fakeInput);
-    assertEquals(2.5, sensor.getDistance(), TOLERANCE);
+    assertEquals(500.0, sensor.getDistance(), TOLERANCE);
   }
 }

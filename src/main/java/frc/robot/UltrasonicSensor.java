@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.AnalogInput;
 
 public class UltrasonicSensor {
   AnalogInput input;
+  final private double CM_PER_VOLT = 102.4;
 
   public UltrasonicSensor(AnalogInput input) {
     this.input = input;
@@ -16,9 +17,6 @@ public class UltrasonicSensor {
   public double getDistance() {
     double voltage = input.getVoltage();
 
-    double distance = voltage/1024;
-    distance /= 10;  // Convert from mm to cm
-
-    return distance;
+    return voltage * CM_PER_VOLT; // Convert to cm
   }
 }
