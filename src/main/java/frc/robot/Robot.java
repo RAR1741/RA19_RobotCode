@@ -7,24 +7,24 @@
 
 package frc.robot;
 
-import frc.vision.*;
+import java.util.logging.Logger;
 
 import org.opencv.core.Rect;
 import org.opencv.imgproc.Imgproc;
 
-import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.vision.VisionThread;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.SPI.Port;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.vision.VisionThread;
-import java.util.logging.Logger;
 import frc.robot.logging.DataLogger;
+import frc.vision.MyVisionPipeline;
 
 /**
  * The VM is configured to automatically run this class, and to call the
