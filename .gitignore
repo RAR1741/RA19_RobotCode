@@ -3,7 +3,6 @@
 # logs
 logs/
 
-
 ### C++ ###
 # Prerequisites
 *.d
@@ -167,8 +166,8 @@ bin/
 *.swp
 
 # Ignore local gradle.properties file. To use gradle locally if you have Windows, try
-# putting this in a gradle.properties file in the root of this repository: 
-# 
+# putting this in a gradle.properties file in the root of this repository:
+#
 # org.gradle.java.home=C:\\Users\\Public\\frc2019\\jdk
 #
 gradle.properties

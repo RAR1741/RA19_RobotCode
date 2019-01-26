@@ -8,6 +8,7 @@
 package frc.robot;
 
 import java.io.File;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,9 +28,6 @@ import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.vision.MyVisionPipeline;
-
-import java.util.Objects;
-import java.util.logging.Logger;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -79,6 +77,7 @@ public class Robot extends TimedRobot {
             logger.severe(String.format("Couldn't set log level: %s", ex.getMessage()));
         }
     }
+
     boolean isSimulation = Objects.equals(System.getProperty("sun.java.command"), "com.snobot.simulator.Main");
 
     /**
