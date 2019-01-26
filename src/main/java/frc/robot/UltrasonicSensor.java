@@ -16,7 +16,8 @@ public class UltrasonicSensor {
   public double getDistance() {
     double voltage = input.getVoltage();
 
-    double distance = voltage/2;
+    double distance = voltage/1024;
+    distance /= 10;  // Convert from mm to cmgs
 
     return distance;
   }
