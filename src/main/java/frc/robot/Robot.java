@@ -141,6 +141,13 @@ public class Robot extends TimedRobot {
         }
 
         pressureSensor = new PressureSensor(new AnalogInput(0));
+        navX = new LoggableNavX(Port.kMXP);
+        dataLogger = new DataLogger();
+        dataLogger.open("log.csv");
+
+        dataLogger.addLoggable(navX);
+        dataLogger.setupLoggables();
+        dataLogger.writeAttributes();
 
         logger.info("Robot initialized.");
     }
