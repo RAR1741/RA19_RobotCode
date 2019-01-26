@@ -8,6 +8,7 @@
 package frc.robot;
 
 import java.io.File;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -77,6 +78,8 @@ public class Robot extends TimedRobot {
         }
     }
 
+    boolean isSimulation = Objects.equals(System.getProperty("sun.java.command"), "com.snobot.simulator.Main");
+
     /**
      * This function is run when the robot is first started up and should be used
      * for any initialization code.
@@ -114,21 +117,25 @@ public class Robot extends TimedRobot {
 
         left = new DigitalInput(1);
 
-        camera = CameraServer.getInstance().startAutomaticCapture();
-        camera.setResolution(IMG_WIDTH, IMG_HEIGHT);
+        // If we're not in the matrix...
+        if (!isSimulation) {
+            camera = CameraServer.getInstance().startAutomaticCapture();
+            camera.setResolution(IMG_WIDTH, IMG_HEIGHT);
+
+            visionThread = new VisionThread(camera, new MyVisionPipeline(), pipeline -> {
+                if (!pipeline.filterContoursOutput().isEmpty()) {
+                    Rect r = Imgproc.boundingRect(pipeline.filterContoursOutput().get(0));
+                    synchronized (imgLock) {
+                        centerX = r.x + (r.width / 2);
+                        System.out.println("Camera: " + centerX);
+                    }
+                }
+            });
+            visionThread.start();
+        }
 
         pressureSensor = new PressureSensor(new AnalogInput(0));
 
-        visionThread = new VisionThread(camera, new MyVisionPipeline(), pipeline -> {
-            if (!pipeline.filterContoursOutput().isEmpty()) {
-                Rect r = Imgproc.boundingRect(pipeline.filterContoursOutput().get(0));
-                synchronized (imgLock) {
-                    centerX = r.x + (r.width / 2);
-                    System.out.println("Camera: " + centerX);
-                }
-            }
-        });
-        visionThread.start();
         logger.info("Robot initialized.");
     }
 
