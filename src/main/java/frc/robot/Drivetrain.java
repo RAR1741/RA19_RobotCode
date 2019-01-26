@@ -25,11 +25,13 @@ public class Drivetrain {
      * @param rightTalon1Id The CAN id of the first right talon.
      * @param rightTalon2Id The CAN id of the second right talon.
      */
-    Drivetrain(leftTalon1Id, leftTalon2Id, rightTalon1Id, rightTalon2Id) {
+    Drivetrain(int leftTalon1Id, int leftTalon2Id, int rightTalon1Id, int rightTalon2Id) {
         leftTalon  = new WPI_TalonSRX(leftTalon1Id);
         leftSlave  = new WPI_TalonSRX(leftTalon2Id);
         rightTalon = new WPI_TalonSRX(rightTalon1Id);
         rightSlave = new WPI_TalonSRX(rightTalon2Id);
+
+        leftTalon.setInverted(true);
 
         leftSlave.follow(leftTalon);
         rightSlave.follow(rightTalon);

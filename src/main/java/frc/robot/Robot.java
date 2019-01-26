@@ -9,6 +9,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -35,12 +36,12 @@ public class Robot extends TimedRobot {
     private DoubleSolenoid ds4;
     private DoubleSolenoid ds5;
     private DoubleSolenoid ds6;
+    private Drivetrain drive;
     private XboxController xbc;
     private boolean xButtonState = false;
     private boolean aButtonState = false;
     private boolean bButtonState = false;
     private boolean yButtonState = false;
-    private boolean bumperButtonState = false;
     private boolean startButtonState = false;
     private boolean backButtonState = false;
     private DigitalInput left;
@@ -167,24 +168,11 @@ public class Robot extends TimedRobot {
             } else {
                 ds6.set(DoubleSolenoid.Value.kReverse);
             }
-        } else if (xbc.getBumperPressed(Hand.kRight)) {
-            bumperButtonState = !bumperButtonState;
-            if (bumperButtonState) {
-                ds1.set(DoubleSolenoid.Value.kForward);
-                ds2.set(DoubleSolenoid.Value.kForward);
-                ds3.set(DoubleSolenoid.Value.kForward);
-                ds4.set(DoubleSolenoid.Value.kForward);
-                ds5.set(DoubleSolenoid.Value.kForward);
-                ds6.set(DoubleSolenoid.Value.kForward);
-            } else {
-                ds1.set(DoubleSolenoid.Value.kReverse);
-                ds2.set(DoubleSolenoid.Value.kReverse);
-                ds3.set(DoubleSolenoid.Value.kReverse);
-                ds4.set(DoubleSolenoid.Value.kReverse);
-                ds5.set(DoubleSolenoid.Value.kReverse);
-                ds6.set(DoubleSolenoid.Value.kReverse);
-            }
-        }
+        } 
+
+        drive.driveLeft(xbc.getY(GenericHID.Hand.kLeft));
+        drive.driveRight(xbc.getY(GenericHID.Hand.kRight));
+
     }
 
     /**
