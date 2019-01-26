@@ -10,8 +10,8 @@ public class UltrasonicSensor {
   }
 
   /**
-   * Get current pressure in PSI.
-   * @return double pressure in PSI.
+   * Get current distance in centimeters.
+   * @return double distance in centimeters.
    */
   public double getDistance() {
     double voltage = input.getVoltage();
