@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.vision.VisionThread;
 import java.util.logging.Logger;
 import frc.robot.logging.DataLogger;
+import frc.vision.MyVisionPipeline;
 
 /**
  * The VM is configured to automatically run this class, and to call the
