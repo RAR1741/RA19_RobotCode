@@ -58,6 +58,7 @@ public class Robot extends TimedRobot {
         m_chooser.addOption("My Auto", kCustomAuto);
         SmartDashboard.putData("Auto choices", m_chooser);
 
+        drive = new Drivetrain(0, 1, 2, 3);
         compressor = new Compressor();
         compressor.start();
         ds1 = new DoubleSolenoid(0, 0, 1);
