@@ -7,22 +7,26 @@
 
 package frc.robot;
 
-import frc.vision.*;
+import java.io.File;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import com.moandjiezana.toml.Toml;
 
 import org.opencv.core.Rect;
 import org.opencv.imgproc.Imgproc;
 
-import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.vision.VisionThread;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.vision.VisionThread;
-import java.util.logging.Logger;
+import frc.vision.MyVisionPipeline;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -33,6 +37,7 @@ import java.util.logging.Logger;
  */
 public class Robot extends TimedRobot {
     private static final Logger logger = Logger.getLogger(Robot.class.getName());
+    private Toml config;
 
     private final int IMG_WIDTH = 640;
     private final int IMG_HEIGHT = 480;
@@ -61,7 +66,16 @@ public class Robot extends TimedRobot {
 	private VisionThread visionThread;
 	private double centerX = 0.0;
 
-	private final Object imgLock = new Object();
+    private final Object imgLock = new Object();
+
+    private void configureLogging() {
+        try {
+            Level logLevel = Level.parse(config.getString("log.level", "INFO"));
+            logger.setLevel(logLevel);
+        } catch (Exception ex) {
+            logger.severe(String.format("Couldn't set log level: %s", ex.getMessage()));
+        }
+    }
 
     /**
      * This function is run when the robot is first started up and should be used
@@ -70,6 +84,17 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
         logger.info("Initializing robot...");
+
+        try {
+            String pathToLogFile = "/home/lvuser/deploy/robot.toml";
+            logger.info(String.format("Loading log file from \"%s\"", pathToLogFile));
+            config = new Toml().read(new File(pathToLogFile));
+        } catch (Exception ex) {
+            logger.severe(String.format("Couldn't load from file (falling back to empty): %s", ex.getMessage()));
+            config = new Toml();
+        }
+
+        configureLogging();
 
         compressor = new Compressor();
         compressor.start();
