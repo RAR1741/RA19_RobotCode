@@ -19,10 +19,12 @@ import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.SPI.Port;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.vision.VisionThread;
 import java.util.logging.Logger;
+import frc.robot.logging.DataLogger;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -57,6 +59,8 @@ public class Robot extends TimedRobot {
     private DigitalInput middle;
     private DigitalInput right;
     private PressureSensor pressureSensor;
+    private DataLogger dataLogger;
+    private LoggableNavX navX;
 
 	private VisionThread visionThread;
 	private double centerX = 0.0;
@@ -104,6 +108,12 @@ public class Robot extends TimedRobot {
             }
         });
         visionThread.start();
+
+        navX = new LoggableNavX(Port.kOnboardCS0);
+
+        dataLogger.open("Log.csv");
+        navX.setupLogging(dataLogger);
+        dataLogger.writeAttributes();
         logger.info("Robot initialized.");
     }
 
@@ -144,6 +154,11 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousPeriodic() {
         // Run autonomous code (state machines, etc.)
+    }
+
+    @Override
+    public void teleopInit() {
+        logger.info("Entering teleOperated mode.");
     }
 
     /**
@@ -213,6 +228,8 @@ public class Robot extends TimedRobot {
                 ds6.set(DoubleSolenoid.Value.kReverse);
             }
         }
+        navX.log(dataLogger);
+        dataLogger.writeLine();
     }
 
     /**
