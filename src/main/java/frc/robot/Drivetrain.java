@@ -55,6 +55,17 @@ public class Drivetrain {
     }
 
     /**
+     * Drives the robot with an arcade style drive
+     * 
+     * @param xDrive The speed to drive the drivetrain in the x direction (ranges from -1.0 to +1.0)
+     * @param yDrive The speed to drive the drivetrain in the y direction (ranges from -1.0 to +1.0)
+     */
+    public void arcadeDrive(double xDrive, double yDrive) {
+        this.driveLeft(yDrive + xDrive);
+        this.driveRight(yDrive - xDrive);
+    }
+
+    /**
      * Normalizes the input to 0.0 if it is below the value set by {@link #DEADBAND_LIMIT}
      * This is primarily used for reducing the strain on motors.
      * @param in the input to check

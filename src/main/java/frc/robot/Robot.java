@@ -170,9 +170,8 @@ public class Robot extends TimedRobot {
             }
         } 
 
-        drive.driveLeft(xbc.getY(GenericHID.Hand.kLeft));
-        drive.driveRight(xbc.getY(GenericHID.Hand.kRight));
-
+        drive.arcadeDrive(xbc.getX(GenericHID.Hand.kLeft), 
+                          xbc.getY(GenericHID.Hand.kLeft));
     }
 
     /**
