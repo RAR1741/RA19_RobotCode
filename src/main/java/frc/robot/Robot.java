@@ -28,6 +28,9 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.vision.MyVisionPipeline;
 
+import java.util.Objects;
+import java.util.logging.Logger;
+
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the TimedRobot
@@ -76,6 +79,7 @@ public class Robot extends TimedRobot {
             logger.severe(String.format("Couldn't set log level: %s", ex.getMessage()));
         }
     }
+    boolean isSimulation = Objects.equals(System.getProperty("sun.java.command"), "com.snobot.simulator.Main");
 
     /**
      * This function is run when the robot is first started up and should be used
@@ -114,8 +118,11 @@ public class Robot extends TimedRobot {
 
         left = new DigitalInput(1);
 
-        camera = CameraServer.getInstance().startAutomaticCapture();
-        camera.setResolution(IMG_WIDTH, IMG_HEIGHT);
+        // If we're not in the matrix...
+        if (!isSimulation) {
+            camera = CameraServer.getInstance().startAutomaticCapture();
+            camera.setResolution(IMG_WIDTH, IMG_HEIGHT);
+        }
 
         pressureSensor = new PressureSensor(new AnalogInput(0));
 

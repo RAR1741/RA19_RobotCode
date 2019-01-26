@@ -1,6 +1,9 @@
 !!com.snobot.simulator.config.v1.SimulatorConfigV1
 mAccelerometers: []
-mAnalogIn: []
+mAnalogIn:
+- mHandle: 0
+  mName: Analog In 0
+  mType: com.snobot.simulator.module_wrapper.wpi.WpiAnalogInWrapper
 mAnalogOut: []
 mDefaultI2CWrappers: {}
 mDefaultSpiWrappers: {}
@@ -49,4 +52,10 @@ mSolenoids:
   mType: com.snobot.simulator.module_wrapper.wpi.WpiSolenoidWrapper
 - mHandle: 11
   mName: Solenoid 11
+  mType: com.snobot.simulator.module_wrapper.wpi.WpiSolenoidWrapper
+- mHandle: 12
+  mName: Solenoid 12
+  mType: com.snobot.simulator.module_wrapper.wpi.WpiSolenoidWrapper
+- mHandle: 13
+  mName: Solenoid 13
   mType: com.snobot.simulator.module_wrapper.wpi.WpiSolenoidWrapper
