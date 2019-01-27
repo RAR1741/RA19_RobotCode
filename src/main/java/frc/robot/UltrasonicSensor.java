@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.AnalogInput;
 
 public class UltrasonicSensor {
   AnalogInput input;
-  final private double CM_PER_VOLT = 102.4;
+  private final double CM_PER_VOLT = 102.4;
 
   public UltrasonicSensor(AnalogInput input) {
     this.input = input;
