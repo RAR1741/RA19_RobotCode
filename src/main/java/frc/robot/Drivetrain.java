@@ -1,13 +1,20 @@
 package frc.robot;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+
+import frc.robot.logging.DataLogger;
+import frc.robot.logging.Loggable;
 
 /**
  * Drivetrain class for the 2019 robot drivetrain.
  * @author iCodeCoolStuff
  */
-public class Drivetrain {
+public class Drivetrain implements Loggable {
     
     /**{@value #DEADBAND_LIMIT} The limit for when to stop the motor running if the motor speed is too low.*/
     private static final double DEADBAND_LIMIT = 0.02;
@@ -74,5 +81,41 @@ public class Drivetrain {
      */
     public double deadband(double in) {
         return Math.abs(in) > DEADBAND_LIMIT ? in : 0.0;
+    }
+
+    public void setupLogging(DataLogger logger) {
+        for (var entry : motorsByName()) {
+            logger.addAttribute(entry.getKey()+"Current");
+            logger.addAttribute(entry.getKey()+"Voltage");
+            logger.addAttribute(entry.getKey()+"Value");
+            logger.addAttribute(entry.getKey()+"Position");
+            logger.addAttribute(entry.getKey()+"Velocity");
+        }
+    }
+
+    public void log(DataLogger logger) {
+        for (var entry : motorsByName()) {
+            var talon = entry.getValue();
+            logger.log(entry.getKey()+"Current", talon.getOutputCurrent());
+            logger.log(entry.getKey()+"Voltage", talon.getBusVoltage());
+            logger.log(entry.getKey()+"Value", talon.get());
+            logger.log(entry.getKey()+"Position", talon.getSelectedSensorPosition());
+            logger.log(entry.getKey()+"Velocity", talon.getSelectedSensorVelocity());
+        }
+    }
+
+    /**
+     * Convenience method to return all talons by name for logging purposes.
+     * @return list of name/motor entries in order.
+     */
+    private List<Map.Entry<String, WPI_TalonSRX>> motorsByName() {
+        var list = new ArrayList<Map.Entry<String, WPI_TalonSRX>>();
+
+        list.add(Map.entry("LeftFront", this.leftTalon));
+        list.add(Map.entry("LeftRear", this.leftSlave));
+        list.add(Map.entry("RightFront", this.rightTalon));
+        list.add(Map.entry("RightRear", this.rightSlave));
+
+        return list;
     }
 }
