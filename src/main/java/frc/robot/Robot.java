@@ -58,16 +58,9 @@ public class Robot extends TimedRobot {
         m_chooser.addOption("My Auto", kCustomAuto);
         SmartDashboard.putData("Auto choices", m_chooser);
 
-        drive = new Drivetrain(0, 1, 2, 3);
+        drive = new Drivetrain(5, 10, 8, 13);
         compressor = new Compressor();
         compressor.start();
-        ds1 = new DoubleSolenoid(0, 0, 1);
-        ds2 = new DoubleSolenoid(0, 2, 3);
-        ds3 = new DoubleSolenoid(0, 4, 5);
-        ds4 = new DoubleSolenoid(0, 6, 7);
-
-        ds5 = new DoubleSolenoid(1, 0, 1);
-        ds6 = new DoubleSolenoid(1, 2, 3);
 
         xbc = new XboxController(0);
 
@@ -127,50 +120,6 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void teleopPeriodic() {
-        if (xbc.getXButtonPressed()) {
-            xButtonState = !xButtonState;
-            if (xButtonState) {
-                ds1.set(DoubleSolenoid.Value.kForward);
-            } else {
-                ds1.set(DoubleSolenoid.Value.kReverse);
-            }
-        } else if (xbc.getAButtonPressed()) {
-            aButtonState = !aButtonState;
-            if (aButtonState) {
-                ds2.set(DoubleSolenoid.Value.kForward);
-            } else {
-                ds2.set(DoubleSolenoid.Value.kReverse);
-            }
-        } else if (xbc.getBButtonPressed()) {
-            bButtonState = !bButtonState;
-            if (bButtonState) {
-                ds3.set(DoubleSolenoid.Value.kForward);
-            } else {
-                ds3.set(DoubleSolenoid.Value.kReverse);
-            }
-        } else if (xbc.getYButtonPressed()) {
-            yButtonState = !yButtonState;
-            if (yButtonState) {
-                ds4.set(DoubleSolenoid.Value.kForward);
-            } else {
-                ds4.set(DoubleSolenoid.Value.kReverse);
-            }
-        } else if (xbc.getStartButtonPressed()) {
-            startButtonState = !startButtonState;
-            if (startButtonState) {
-                ds5.set(DoubleSolenoid.Value.kForward);
-            } else {
-                ds5.set(DoubleSolenoid.Value.kReverse);
-            }
-        } else if (xbc.getBackButtonPressed()) {
-            backButtonState = !backButtonState;
-            if (backButtonState) {
-                ds6.set(DoubleSolenoid.Value.kForward);
-            } else {
-                ds6.set(DoubleSolenoid.Value.kReverse);
-            }
-        } 
-
         drive.arcadeDrive(xbc.getX(GenericHID.Hand.kLeft), 
                           xbc.getY(GenericHID.Hand.kLeft));
     }
