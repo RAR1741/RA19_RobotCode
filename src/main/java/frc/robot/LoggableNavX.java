@@ -7,9 +7,9 @@ import frc.robot.logging.Loggable;
 
 public class LoggableNavX extends AHRS implements Loggable
 {
-	public LoggableNavX(Port spi_port_id)
+	public LoggableNavX(Port spiPortId)
 	{
-		super(spi_port_id);
+		super(spiPortId);
 	}
 
 	@Override
@@ -26,7 +26,6 @@ public class LoggableNavX extends AHRS implements Loggable
 		logger.addAttribute("navx_Alt");
 		logger.addAttribute("navx_XDis");
 		logger.addAttribute("navx_YDis");
-		logger.addAttribute("navx_YAcc");
 	}
 
 	@Override

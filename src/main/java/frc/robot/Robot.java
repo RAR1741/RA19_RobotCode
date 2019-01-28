@@ -28,8 +28,6 @@ import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.SPI.Port;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.vision.VisionThread;
-import java.util.logging.Logger;
 import frc.robot.logging.DataLogger;
 import frc.vision.MyVisionPipeline;
 
