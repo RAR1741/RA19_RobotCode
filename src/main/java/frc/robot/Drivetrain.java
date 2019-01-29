@@ -10,7 +10,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 public class Drivetrain {
     
     /**{@value #DEADBAND_LIMIT} The limit for when to stop the motor running if the motor speed is too low.*/
-    private final double DEADBAND_LIMIT = 0.02;
+    private static final double DEADBAND_LIMIT = 0.02;
 
     private WPI_TalonSRX leftTalon;
     private WPI_TalonSRX leftSlave;
