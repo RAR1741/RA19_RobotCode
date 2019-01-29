@@ -32,6 +32,7 @@ public class Drivetrain {
         rightSlave = new WPI_TalonSRX(rightTalon2Id);
 
         leftTalon.setInverted(true);
+        leftSlave.setInverted(true);
 
         leftSlave.follow(leftTalon);
         rightSlave.follow(rightTalon);
@@ -61,8 +62,8 @@ public class Drivetrain {
      * @param yDrive The speed to drive the drivetrain in the y direction (ranges from -1.0 to +1.0)
      */
     public void arcadeDrive(double xDrive, double yDrive) {
-        this.driveLeft(yDrive + xDrive);
-        this.driveRight(yDrive - xDrive);
+        this.driveLeft(yDrive - xDrive);
+        this.driveRight(yDrive + xDrive);
     }
 
     /**

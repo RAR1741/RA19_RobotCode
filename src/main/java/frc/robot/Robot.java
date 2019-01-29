@@ -58,8 +58,8 @@ public class Robot extends TimedRobot {
         m_chooser.addOption("My Auto", kCustomAuto);
         SmartDashboard.putData("Auto choices", m_chooser);
 
-        drive = new Drivetrain(5, 10, 8, 13);
-        compressor = new Compressor();
+        drive = new Drivetrain(4, 5, 6, 7);
+        compressor = new Compressor(2);
         compressor.start();
 
         xbc = new XboxController(0);
