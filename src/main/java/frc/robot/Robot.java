@@ -63,9 +63,10 @@ public class Robot extends TimedRobot {
   private DigitalInput middle;
   private DigitalInput right;
   private PressureSensor pressureSensor;
+  private UltrasonicSensor ultrasonicSensor;
 
-	private VisionThread visionThread;
-	private double centerX = 0.0;
+  private VisionThread visionThread;
+  private double centerX = 0.0;
 
   private final Object imgLock = new Object();
 
@@ -109,9 +110,11 @@ public class Robot extends TimedRobot {
     ds5 = new DoubleSolenoid(1, 0, 1);
     ds6 = new DoubleSolenoid(1, 2, 3);
 
+    pressureSensor = new PressureSensor(new AnalogInput(0));
+    ultrasonicSensor = new UltrasonicSensor(new AnalogInput(1));
+
     ledLights = new DoubleSolenoid(1, 4, 5);
     ledLights.set(DoubleSolenoid.Value.kForward);
-
 
     xbc = new XboxController(0);
 
