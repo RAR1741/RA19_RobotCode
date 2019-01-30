@@ -142,7 +142,8 @@ public class Robot extends TimedRobot {
     navX = new LoggableNavX(Port.kMXP);
     dataLogger = new DataLogger();
     
-    dataLogger.open("log.csv");
+
+    dataLogger.open("/home/lvuser/log.csv");
     dataLogger.addLoggable(navX);
     dataLogger.setupLoggables();
     dataLogger.writeAttributes();
