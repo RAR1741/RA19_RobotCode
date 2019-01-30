@@ -57,6 +57,7 @@ public class Robot extends TimedRobot {
     private DigitalInput middle;
     private DigitalInput right;
     private PressureSensor pressureSensor;
+    private UltrasonicSensor ultrasonicSensor;
 
 	private VisionThread visionThread;
 	private double centerX = 0.0;
@@ -93,6 +94,7 @@ public class Robot extends TimedRobot {
         camera.setResolution(IMG_WIDTH, IMG_HEIGHT);
 
         pressureSensor = new PressureSensor(new AnalogInput(0));
+        ultrasonicSensor = new UltrasonicSensor(new AnalogInput(1));
 
         visionThread = new VisionThread(camera, new MyVisionPipeline(), pipeline -> {
             if (!pipeline.filterContoursOutput().isEmpty()) {
@@ -153,6 +155,7 @@ public class Robot extends TimedRobot {
     public void teleopPeriodic() {
         // Run teleop code (interpreting input, etc.)
         System.out.println(String.format("Pressure: %2.2f", pressureSensor.getPressure()));
+        System.out.println(String.format("Ultrasonic Distance: %2.2f", ultrasonicSensor.getDistance()));
         if (xbc.getXButtonPressed()) {
             xButtonState = !xButtonState;
             if (xButtonState) {
