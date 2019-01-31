@@ -1,0 +1,3 @@
+version: "2"
+exclude_patterns: 
+ - "src/main/java/frc/vision/MyVisionPipeline.java"
