@@ -6,6 +6,12 @@ public class AutoLineup {
   private final int CAM_FOV = 60;
   private final double TARGET_DISTANCE = 200;
 
+  public enum AutoLineupState{
+    LINING_UP,
+    DRIVING,
+    TURNING
+  }
+
   /*
     double turn = centerX - (IMG_WIDTH/2);
     double cameraDegree = turn/(IMG_WIDTH/CAM_FOV);
