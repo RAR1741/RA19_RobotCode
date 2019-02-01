@@ -8,7 +8,6 @@
 package frc.robot;
 
 import java.io.File;
-import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -29,6 +28,7 @@ import edu.wpi.first.wpilibj.SPI.Port;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.logging.DataLogger;
+import frc.robot.Filesystem;
 import frc.vision.MyVisionPipeline;
 
 /**
@@ -83,8 +83,6 @@ public class Robot extends TimedRobot {
     }
   }
 
-  boolean isSimulation = Objects.equals(System.getProperty("sun.java.command"), "com.snobot.simulator.Main");
-
   /**
    * This function is run when the robot is first started up and should be used
    * for any initialization code.
@@ -94,9 +92,9 @@ public class Robot extends TimedRobot {
     logger.info("Initializing robot...");
 
     try {
-      String pathToLogFile = "/home/lvuser/deploy/robot.toml";
-      logger.info(String.format("Loading log file from \"%s\"", pathToLogFile));
-      config = new Toml().read(new File(pathToLogFile));
+      String pathToTomlFile = Filesystem.localDeployPath("robot.toml");
+      logger.info(String.format("Loading log file from \"%s\"", pathToTomlFile));
+      config = new Toml().read(new File(pathToTomlFile));
     } catch (Exception ex) {
       logger.severe(String.format("Couldn't load from file (falling back to empty): %s", ex.getMessage()));
       config = new Toml();
@@ -116,6 +114,7 @@ public class Robot extends TimedRobot {
 
     pressureSensor = new PressureSensor(new AnalogInput(0));
     ultrasonicSensor = new UltrasonicSensor(new AnalogInput(1));
+    navX = new LoggableNavX(Port.kMXP);
 
     ledLights = new DoubleSolenoid(1, 4, 5);
     ledLights.set(DoubleSolenoid.Value.kForward);
@@ -125,7 +124,7 @@ public class Robot extends TimedRobot {
     left = new DigitalInput(1);
 
     // If we're not in the matrix...
-    if (!isSimulation) {
+    if (!RuntimeDetector.isSimulation()) {
       camera = CameraServer.getInstance().startAutomaticCapture();
       camera.setResolution(IMG_WIDTH, IMG_HEIGHT);
 
@@ -141,12 +140,9 @@ public class Robot extends TimedRobot {
       visionThread.start();
     }
 
-    pressureSensor = new PressureSensor(new AnalogInput(0));
-    navX = new LoggableNavX(Port.kMXP);
     dataLogger = new DataLogger();
-    
-
-    dataLogger.open("/home/lvuser/log.csv");
+    String pathToLogFile = Filesystem.localPath("logs", "log.csv");
+    dataLogger.open(pathToLogFile);
     dataLogger.addLoggable(navX);
     dataLogger.setupLoggables();
     dataLogger.writeAttributes();
@@ -199,7 +195,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     // Run teleop code (interpreting input, etc.)
-    System.out.println(String.format("Pressure: %2.2f", pressureSensor.getPressure()));
+    // System.out.println(String.format("Pressure: %2.2f", pressureSensor.getPressure()));
     if (xbc.getXButtonPressed()) {
       xButtonState = !xButtonState;
       if (xButtonState) {
