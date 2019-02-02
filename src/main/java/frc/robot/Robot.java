@@ -60,6 +60,7 @@ public class Robot extends TimedRobot {
   private LoggableNavX navX;
   private UltrasonicSensor ultrasonicSensor;
   private DoubleSolenoid ledLights;
+  private Timer timer;
 
   private VisionThread visionThread;
   private double centerX = 0.0;
@@ -82,6 +83,11 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     logger.info("Initializing robot...");
+
+    logger.info("Starting timer...");
+    timer = new Timer();
+    timer.start();
+    logger.info("Timer started");
 
     try {
       String pathToTomlFile = Filesystem.localDeployPath("robot.toml");
@@ -128,6 +134,7 @@ public class Robot extends TimedRobot {
     dataLogger = new DataLogger();
     String pathToLogFile = Filesystem.localPath("logs", "log.csv");
     dataLogger.open(pathToLogFile);
+    dataLogger.addAttribute("timer");
     dataLogger.addLoggable(drive);
     dataLogger.addLoggable(navX);
     dataLogger.setupLoggables();
@@ -184,6 +191,7 @@ public class Robot extends TimedRobot {
     System.out.println(String.format("Pressure: %2.2f", pressureSensor.getPressure()));
     drive.arcadeDrive(xbc.getX(GenericHID.Hand.kLeft),
                       xbc.getY(GenericHID.Hand.kLeft));
+    dataLogger.log("timer", timer.get());
     drive.log(dataLogger);
     navX.log(dataLogger);
     dataLogger.writeLine();
