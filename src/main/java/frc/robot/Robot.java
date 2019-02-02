@@ -111,15 +111,15 @@ public class Robot extends TimedRobot {
     ultrasonicSensor = new UltrasonicSensor(new AnalogInput(1));
     navX = new LoggableNavX(Port.kMXP);
 
-    ledLights = new DoubleSolenoid(1, 4, 5);
-    ledLights.set(DoubleSolenoid.Value.kForward);
-
     xbc = new XboxController(0);
 
     left = new DigitalInput(1);
 
     // If we're not in the matrix...
     if (!RuntimeDetector.isSimulation()) {
+      ledLights = new DoubleSolenoid(1, 4, 5);
+      ledLights.set(DoubleSolenoid.Value.kForward);
+
       camera = CameraServer.getInstance().startAutomaticCapture();
       camera.setResolution(IMG_WIDTH, IMG_HEIGHT);
 
