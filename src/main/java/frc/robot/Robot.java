@@ -104,7 +104,7 @@ public class Robot extends TimedRobot {
 
     configureLogging();
 
-    compressor = new Compressor();
+    compressor = new Compressor(2);
     compressor.start();
 
     pressureSensor = new PressureSensor(new AnalogInput(0));
