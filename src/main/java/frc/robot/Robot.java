@@ -98,6 +98,10 @@ public class Robot extends TimedRobot {
       config = new Toml();
     }
 
+    logger.info("Starting drivetrain...");
+    drive = new Drivetrain(4,5,6,7);
+    logger.info("Drivetrain started");
+
     configureLogging();
 
     compressor = new Compressor();
