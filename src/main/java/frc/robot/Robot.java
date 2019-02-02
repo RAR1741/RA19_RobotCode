@@ -21,14 +21,18 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.vision.VisionThread;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.SPI.Port;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.logging.DataLogger;
 import frc.robot.Filesystem;
+import frc.robot.LoggableNavX;
 import frc.vision.MyVisionPipeline;
 
 /**
@@ -46,28 +50,17 @@ public class Robot extends TimedRobot {
   private final int IMG_HEIGHT = 480;
   private UsbCamera camera;
   private Compressor compressor;
-  private DoubleSolenoid ds1;
-  private DoubleSolenoid ds2;
-  private DoubleSolenoid ds3;
-  private DoubleSolenoid ds4;
-  private DoubleSolenoid ds5;
-  private DoubleSolenoid ds6;
-  private DoubleSolenoid ledLights;
-  private XboxController xbc;
-  private boolean xButtonState = false;
-  private boolean aButtonState = false;
-  private boolean bButtonState = false;
-  private boolean yButtonState = false;
-  private boolean bumperButtonState = false;
-  private boolean startButtonState = false;
-  private boolean backButtonState = false;
   private DigitalInput left;
   private DigitalInput middle;
   private DigitalInput right;
   private PressureSensor pressureSensor;
+  private XboxController xbc;
+  private Drivetrain drive;
   private DataLogger dataLogger;
   private LoggableNavX navX;
   private UltrasonicSensor ultrasonicSensor;
+  private DoubleSolenoid ledLights;
+  private Timer timer;
 
   private VisionThread visionThread;
   private double centerX = 0.0;
@@ -91,6 +84,11 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     logger.info("Initializing robot...");
 
+    logger.info("Starting timer...");
+    timer = new Timer();
+    timer.start();
+    logger.info("Timer started");
+
     try {
       String pathToTomlFile = Filesystem.localDeployPath("robot.toml");
       logger.info(String.format("Loading log file from \"%s\"", pathToTomlFile));
@@ -100,24 +98,18 @@ public class Robot extends TimedRobot {
       config = new Toml();
     }
 
+    logger.info("Starting drivetrain...");
+    drive = new Drivetrain(4,5,6,7);
+    logger.info("Drivetrain started");
+
     configureLogging();
 
-    compressor = new Compressor();
+    compressor = new Compressor(2);
     compressor.start();
-    ds1 = new DoubleSolenoid(0, 0, 1);
-    ds2 = new DoubleSolenoid(0, 2, 3);
-    ds3 = new DoubleSolenoid(0, 4, 5);
-    ds4 = new DoubleSolenoid(0, 6, 7);
-
-    ds5 = new DoubleSolenoid(1, 0, 1);
-    ds6 = new DoubleSolenoid(1, 2, 3);
 
     pressureSensor = new PressureSensor(new AnalogInput(0));
     ultrasonicSensor = new UltrasonicSensor(new AnalogInput(1));
     navX = new LoggableNavX(Port.kMXP);
-
-    ledLights = new DoubleSolenoid(1, 4, 5);
-    ledLights.set(DoubleSolenoid.Value.kForward);
 
     xbc = new XboxController(0);
 
@@ -125,6 +117,9 @@ public class Robot extends TimedRobot {
 
     // If we're not in the matrix...
     if (!RuntimeDetector.isSimulation()) {
+      ledLights = new DoubleSolenoid(1, 4, 5);
+      ledLights.set(DoubleSolenoid.Value.kForward);
+
       camera = CameraServer.getInstance().startAutomaticCapture();
       camera.setResolution(IMG_WIDTH, IMG_HEIGHT);
 
@@ -143,6 +138,8 @@ public class Robot extends TimedRobot {
     dataLogger = new DataLogger();
     String pathToLogFile = Filesystem.localPath("logs", "log.csv");
     dataLogger.open(pathToLogFile);
+    dataLogger.addAttribute("timer");
+    dataLogger.addLoggable(drive);
     dataLogger.addLoggable(navX);
     dataLogger.setupLoggables();
     dataLogger.writeAttributes();
@@ -195,67 +192,11 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     // Run teleop code (interpreting input, etc.)
-    // System.out.println(String.format("Pressure: %2.2f", pressureSensor.getPressure()));
-    if (xbc.getXButtonPressed()) {
-      xButtonState = !xButtonState;
-      if (xButtonState) {
-        ds1.set(DoubleSolenoid.Value.kForward);
-      } else {
-        ds1.set(DoubleSolenoid.Value.kReverse);
-      }
-    } else if (xbc.getAButtonPressed()) {
-      aButtonState = !aButtonState;
-      if (aButtonState) {
-        ds2.set(DoubleSolenoid.Value.kForward);
-      } else {
-        ds2.set(DoubleSolenoid.Value.kReverse);
-      }
-    } else if (xbc.getBButtonPressed()) {
-      bButtonState = !bButtonState;
-      if (bButtonState) {
-        ds3.set(DoubleSolenoid.Value.kForward);
-      } else {
-        ds3.set(DoubleSolenoid.Value.kReverse);
-      }
-    } else if (xbc.getYButtonPressed()) {
-      yButtonState = !yButtonState;
-      if (yButtonState) {
-        ds4.set(DoubleSolenoid.Value.kForward);
-      } else {
-        ds4.set(DoubleSolenoid.Value.kReverse);
-      }
-    } else if (xbc.getStartButtonPressed()) {
-      startButtonState = !startButtonState;
-      if (startButtonState) {
-        ds5.set(DoubleSolenoid.Value.kForward);
-      } else {
-        ds5.set(DoubleSolenoid.Value.kReverse);
-      }
-    } else if (xbc.getBackButtonPressed()) {
-      backButtonState = !backButtonState;
-      if (backButtonState) {
-        ds6.set(DoubleSolenoid.Value.kForward);
-      } else {
-        ds6.set(DoubleSolenoid.Value.kReverse);
-      }
-    } else if (xbc.getBumperPressed(Hand.kRight)) {
-      bumperButtonState = !bumperButtonState;
-      if (bumperButtonState) {
-        ds1.set(DoubleSolenoid.Value.kForward);
-        ds2.set(DoubleSolenoid.Value.kForward);
-        ds3.set(DoubleSolenoid.Value.kForward);
-        ds4.set(DoubleSolenoid.Value.kForward);
-        ds5.set(DoubleSolenoid.Value.kForward);
-        ds6.set(DoubleSolenoid.Value.kForward);
-      } else {
-        ds1.set(DoubleSolenoid.Value.kReverse);
-        ds2.set(DoubleSolenoid.Value.kReverse);
-        ds3.set(DoubleSolenoid.Value.kReverse);
-        ds4.set(DoubleSolenoid.Value.kReverse);
-        ds5.set(DoubleSolenoid.Value.kReverse);
-        ds6.set(DoubleSolenoid.Value.kReverse);
-      }
-    }
+    System.out.println(String.format("Pressure: %2.2f", pressureSensor.getPressure()));
+    drive.arcadeDrive(xbc.getX(GenericHID.Hand.kLeft),
+                      xbc.getY(GenericHID.Hand.kLeft));
+    dataLogger.log("timer", timer.get());
+    drive.log(dataLogger);
     navX.log(dataLogger);
     dataLogger.writeLine();
   }
