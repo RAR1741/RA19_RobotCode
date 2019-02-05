@@ -64,6 +64,7 @@ public class Robot extends TimedRobot {
 
   private VisionThread visionThread;
   private double centerX = 0.0;
+  private AutoLineup autoLineup;
 
   private final Object imgLock = new Object();
 
@@ -123,17 +124,9 @@ public class Robot extends TimedRobot {
       camera = CameraServer.getInstance().startAutomaticCapture();
       camera.setResolution(IMG_WIDTH, IMG_HEIGHT);
 
-      visionThread = new VisionThread(camera, new MyVisionPipeline(), pipeline -> {
-        if (!pipeline.filterContoursOutput().isEmpty()) {
-          Rect r = Imgproc.boundingRect(pipeline.filterContoursOutput().get(0));
-          synchronized (imgLock) {
-            centerX = r.x + (r.width / 2);
-            System.out.println("Camera: " + centerX);
-          }
-        }
-      });
-      visionThread.start();
+
     }
+
 
     dataLogger = new DataLogger();
     String pathToLogFile = Filesystem.localPath("logs", "log.csv");
@@ -176,6 +169,17 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     logger.info("Entering autonomous mode.");
+    visionThread = new VisionThread(camera, new MyVisionPipeline(), pipeline -> {
+      if (!pipeline.filterContoursOutput().isEmpty()) {
+        Rect r = Imgproc.boundingRect(pipeline.filterContoursOutput().get(0));
+        synchronized (imgLock) {
+          centerX = r.x + (r.width / 2);
+          System.out.println("Camera: " + centerX);
+        }
+      }
+    });
+    visionThread.start();
+    autoLineup = new AutoLineup(drive, ultrasonicSensor, navX);
   }
 
   /**
@@ -184,6 +188,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     // Run autonomous code (state machines, etc.)
+    autoLineup.run(centerX);
   }
 
   /**

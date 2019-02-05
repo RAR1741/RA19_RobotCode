@@ -1,6 +1,10 @@
 package frc.robot;
 
 import frc.robot.Drivetrain;
+import frc.robot.LoggableNavX;
+import frc.robot.UltrasonicSensor;
+
+import com.kauailabs.navx.frc.AHRS;
 
 public class AutoLineup {
 
@@ -9,26 +13,31 @@ public class AutoLineup {
   private final double TARGET_DISTANCE = 200;
   private final double MAX_MOTOR_PERCENT = 0.8;
 
-  private double P;
+  private double P; // Needes to be tuned
   private double motorPower;
   private double error;
+  private double directDistance;
 
   public enum AutoLineupState {
     LINING_UP,
     LINING_UP_2,
     DRIVING,
     TURNING,
-    IDLE; 
+    IDLE;
   }
   private AutoLineupState state;
   private Drivetrain drive;
+  private UltrasonicSensor sensor;
+  private LoggableNavX navx;
 
-  public AutoLineup(Drivetrain drive){
+  public AutoLineup(Drivetrain drive, UltrasonicSensor sensor, LoggableNavX navx){
     state = AutoLineupState.LINING_UP;
     this.drive = drive;
+    this.sensor = sensor;
+    this.navx = navx;
   }
 
-  public void run() {
+  public void run(double centerX) {
     switch(state) {
       case LINING_UP:
         error = getCameraDegree(centerX)/2*P;
@@ -36,14 +45,14 @@ public class AutoLineup {
         drive.driveLeft(motorPower);
         drive.driveRight(-motorPower);
         if (getCameraDegree(centerX) >= -1 || getCameraDegree(centerX) <= 1){
-          double directDistance = getDistance();
+          directDistance = sensor.getDistance();
           state = AutoLineupState.LINING_UP_2;
         }
         break;
 
 
       case LINING_UP_2:
-        error = (getTurnDegree(centerX, getDistance()) - getRoll()) * P;
+        error = (getTurnDegree(centerX, directDistance) - navx.getRoll()) * P;
         motorPower = MAX_MOTOR_PERCENT * P;
         drive.driveLeft(motorPower);
         drive.driveRight(-motorPower);
@@ -53,7 +62,7 @@ public class AutoLineup {
         break;
 
       case DRIVING:
-        error = (getPathDistance(centerX, getDistance()) - getDistance()) * P;
+        error = (getPathDistance(centerX, directDistance) - directDistance) * P;
         motorPower = MAX_MOTOR_PERCENT * P;
         drive.driveLeft(motorPower);
         drive.driveRight(motorPower);
@@ -63,7 +72,7 @@ public class AutoLineup {
         break;
 
       case TURNING:
-        error = (90 - getRoll()) * P;
+        error = (90 - navx.getRoll()) * P;
         motorPower = MAX_MOTOR_PERCENT * P;
         drive.driveLeft(motorPower);
         drive.driveRight(-motorPower);
@@ -76,7 +85,7 @@ public class AutoLineup {
         break;
     }
   }
-  
+
   /*
     double turn = centerX - (IMG_WIDTH/2);
     double cameraDegree = turn/(IMG_WIDTH/CAM_FOV);
@@ -89,7 +98,7 @@ public class AutoLineup {
 
   /**
    * Gets the degrees from the center of the camera's vision.
-   * 
+   *
    * @param turn the number of pixels from the center of the camera
    * @param centerX The center of the vision target
    * @return the number of degrees from the center of the camera's vision
@@ -101,7 +110,7 @@ public class AutoLineup {
 
   /**
    * Gets the length in centimeters of the path to a point TARGET_DISTANCE away from the target.\
-   * 
+   *
    * @param centerX The center of the vision target
    * @param directDistance the number of centimeters from the robot to the target
    */
@@ -115,7 +124,7 @@ public class AutoLineup {
 
   /**
    * Gets the global degrees the robot must turn to in order to line up with the path.
-   * 
+   *
    * @param centerX The center of the vision target
    * @param directDistance the number of centimeters from the robot to the target
    * @return the global degrees the robot must turn to in order to line up with the path
