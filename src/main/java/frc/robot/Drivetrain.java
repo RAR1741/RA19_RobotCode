@@ -104,6 +104,19 @@ public class Drivetrain implements Loggable {
   }
 
   /**
+   * Uses P control to move.
+   *
+   * @param error error from the target
+   * @param maxMotorPercent maximum motor percent
+   * @param isDrivingStraight decides if it is turning or going straight (1 = straight, -1 = turning)
+   */
+  public void drivePControl(double error, double maxMotorPercent, int isDrivingStraight) {
+    double motorPower = maxMotorPercent * error;
+    driveLeft(motorPower);
+    driveRight(motorPower * isDrivingStraight);
+  }
+
+  /**
    * Convenience method to return all talons by name for logging purposes.
    * @return list of name/motor entries in order.
    */
