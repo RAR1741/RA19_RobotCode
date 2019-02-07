@@ -8,6 +8,10 @@
 package frc.robot;
 
 import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -74,6 +78,33 @@ public class Robot extends TimedRobot {
     } catch (Exception ex) {
       logger.severe(String.format("Couldn't set log level: %s", ex.getMessage()));
     }
+  }
+
+  public void startDataLogging(String mode)
+  {
+    String dir = Filesystem.localPath("logs");
+    new File(dir).mkdirs();
+    TimeZone tz = TimeZone.getTimeZone("EST");
+    DateFormat df = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
+    df.setTimeZone(tz);
+    dataLogger.open(dir + "/log-" + df.format(new Date()) + "_" + mode + ".csv");
+    setupDataLogging();
+  }
+
+  private void log()
+  {
+    dataLogger.log("timer", timer.get());
+    dataLogger.logAll();
+    dataLogger.writeLine();
+  }
+
+  private void setupDataLogging()
+  {
+    dataLogger.addAttribute("timer");
+    dataLogger.addLoggable(drive);
+    dataLogger.addLoggable(navX);
+    dataLogger.setupLoggables();
+    dataLogger.writeAttributes();
   }
 
   /**
@@ -176,6 +207,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     logger.info("Entering autonomous mode.");
+    startDataLogging("auto");
   }
 
   /**
@@ -184,6 +216,12 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     // Run autonomous code (state machines, etc.)
+    log();
+  }
+
+  @Override
+  public void teleopInit() {
+    startDataLogging("teleop");
   }
 
   /**
@@ -195,10 +233,12 @@ public class Robot extends TimedRobot {
     System.out.println(String.format("Pressure: %2.2f", pressureSensor.getPressure()));
     drive.arcadeDrive(xbc.getX(GenericHID.Hand.kLeft),
                       xbc.getY(GenericHID.Hand.kLeft));
-    dataLogger.log("timer", timer.get());
-    drive.log(dataLogger);
-    navX.log(dataLogger);
-    dataLogger.writeLine();
+    log();
+  }
+
+  @Override
+  public void testInit() {
+    startDataLogging("test");
   }
 
   /**
@@ -206,6 +246,11 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void testPeriodic() {
-    // This isn't typically used in our programs.
+    log();
+  }
+
+  @Override
+  public void disabledInit() {
+    dataLogger.close();
   }
 }
