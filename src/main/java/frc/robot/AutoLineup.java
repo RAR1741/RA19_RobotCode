@@ -1,5 +1,12 @@
 package frc.robot;
 
+import org.opencv.core.Rect;
+import org.opencv.imgproc.Imgproc;
+
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.vision.VisionThread;
+import frc.vision.MyVisionPipeline;
+
 public class AutoLineup {
 
   private final int IMG_WIDTH = 640;
@@ -17,19 +24,34 @@ public class AutoLineup {
     TURNING,
     IDLE;
   }
+
   private AutoLineupState state;
   private Drivetrain drive;
   private UltrasonicSensor sensor;
   private LoggableNavX navx;
+  private VisionThread visionThread;
+  private double centerX;
+  private final Object imgLock = new Object();
 
-  public AutoLineup(Drivetrain drive, UltrasonicSensor sensor, LoggableNavX navx){
+  public AutoLineup(Drivetrain drive, UltrasonicSensor sensor, LoggableNavX navx, UsbCamera camera){
     state = AutoLineupState.LINING_UP;
     this.drive = drive;
     this.sensor = sensor;
     this.navx = navx;
+
+    visionThread = new VisionThread(camera, new MyVisionPipeline(), pipeline -> {
+      if (!pipeline.filterContoursOutput().isEmpty()) {
+        Rect r = Imgproc.boundingRect(pipeline.filterContoursOutput().get(0));
+        synchronized (imgLock) {
+          centerX = r.x + (r.width / 2);
+          System.out.println("Camera: " + centerX);
+        }
+      }
+    });
+    visionThread.start();
   }
 
-  public void run(double centerX) {
+  public void run() {
     switch(state) {
       case LINING_UP:
         error = getCameraDegree(centerX) * P;

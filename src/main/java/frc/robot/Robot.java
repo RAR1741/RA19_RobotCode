@@ -61,12 +61,8 @@ public class Robot extends TimedRobot {
   private UltrasonicSensor ultrasonicSensor;
   private DoubleSolenoid ledLights;
   private Timer timer;
-
-  private VisionThread visionThread;
   private double centerX = 0.0;
   private AutoLineup autoLineup;
-
-  private final Object imgLock = new Object();
 
   private void configureLogging() {
     try {
@@ -169,17 +165,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     logger.info("Entering autonomous mode.");
-    visionThread = new VisionThread(camera, new MyVisionPipeline(), pipeline -> {
-      if (!pipeline.filterContoursOutput().isEmpty()) {
-        Rect r = Imgproc.boundingRect(pipeline.filterContoursOutput().get(0));
-        synchronized (imgLock) {
-          centerX = r.x + (r.width / 2);
-          System.out.println("Camera: " + centerX);
-        }
-      }
-    });
-    visionThread.start();
-    autoLineup = new AutoLineup(drive, ultrasonicSensor, navX);
+    autoLineup = new AutoLineup(drive, ultrasonicSensor, navX, camera);
   }
 
   /**
@@ -188,7 +174,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     // Run autonomous code (state machines, etc.)
-    autoLineup.run(centerX);
+    autoLineup.run();
   }
 
   /**
