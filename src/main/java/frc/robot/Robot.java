@@ -64,6 +64,8 @@ public class Robot extends TimedRobot {
   private double centerX = 0.0;
   private AutoLineup autoLineup;
 
+  private boolean aButtonState = false;
+
   private void configureLogging() {
     try {
       Level logLevel = Level.parse(config.getString("log.level", "INFO"));
@@ -186,6 +188,13 @@ public class Robot extends TimedRobot {
     System.out.println(String.format("Pressure: %2.2f", pressureSensor.getPressure()));
     drive.arcadeDrive(xbc.getX(GenericHID.Hand.kLeft),
                       xbc.getY(GenericHID.Hand.kLeft));
+    if (xbc.getAButtonPressed()) {
+      aButtonState = !aButtonState;
+      if (aButtonState) {
+        autoLineup.run();
+      }
+    }
+
     dataLogger.log("timer", timer.get());
     drive.log(dataLogger);
     navX.log(dataLogger);
