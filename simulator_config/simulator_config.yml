@@ -4,6 +4,9 @@ mAnalogIn:
 - mHandle: 0
   mName: Analog In 0
   mType: com.snobot.simulator.module_wrapper.wpi.WpiAnalogInWrapper
+- mHandle: 1
+  mName: Analog In 1
+  mType: com.snobot.simulator.module_wrapper.wpi.WpiAnalogInWrapper
 mAnalogOut: []
 mDefaultI2CWrappers: {}
 mDefaultSpiWrappers: {}
@@ -13,6 +16,67 @@ mDigitalIO:
   mType: com.snobot.simulator.module_wrapper.wpi.WpiDigitalIoWrapper
 mEncoders: []
 mGyros: []
-mPwm: []
+mPwm:
+- mHandle: 104
+  mMotorModelConfig:
+    mGearReduction: 10.7142857143
+    mGearboxEfficiency: 0.9
+    mHasBrake: false
+    mInverted: true
+    mMotorType: CIM
+    mNumMotors: 1
+  mMotorSimConfig: !!com.snobot.simulator.motor_sim.RotationalLoadMotorSimulationConfig
+    mArmCenterOfMass: 0.0
+    mArmMass: 0.0
+    mConstantAssistTorque: 0.0
+    mOverCenterAssistTorque: 0.0
+  mName: Left Front Drive
+  mType: com.snobot.simulator.simulator_components.ctre.CtreTalonSrxSpeedControllerSim
+- mHandle: 105
+  mMotorModelConfig:
+    mGearReduction: 10.7142857143
+    mGearboxEfficiency: 0.9
+    mHasBrake: false
+    mInverted: true
+    mMotorType: CIM
+    mNumMotors: 1
+  mMotorSimConfig: !!com.snobot.simulator.motor_sim.RotationalLoadMotorSimulationConfig
+    mArmCenterOfMass: 0.0
+    mArmMass: 0.0
+    mConstantAssistTorque: 0.0
+    mOverCenterAssistTorque: 0.0
+  mName: Left Back Drive
+  mType: com.snobot.simulator.simulator_components.ctre.CtreTalonSrxSpeedControllerSim
+- mHandle: 106
+  mMotorModelConfig:
+    mGearReduction: 10.7142857143
+    mGearboxEfficiency: 0.9
+    mHasBrake: false
+    mInverted: false
+    mMotorType: CIM
+    mNumMotors: 1
+  mMotorSimConfig: !!com.snobot.simulator.motor_sim.RotationalLoadMotorSimulationConfig
+    mArmCenterOfMass: 0.0
+    mArmMass: 0.0
+    mConstantAssistTorque: 0.0
+    mOverCenterAssistTorque: 0.0
+  mName: Right Front Drive
+  mType: com.snobot.simulator.simulator_components.ctre.CtreTalonSrxSpeedControllerSim
+- mHandle: 107
+  mMotorModelConfig:
+    mGearReduction: 10.7142857143
+    mGearboxEfficiency: 0.9
+    mHasBrake: false
+    mInverted: false
+    mMotorType: CIM
+    mNumMotors: 1
+  mMotorSimConfig: !!com.snobot.simulator.motor_sim.RotationalLoadMotorSimulationConfig
+    mArmCenterOfMass: 0.0
+    mArmMass: 0.0
+    mConstantAssistTorque: 0.0
+    mOverCenterAssistTorque: 0.0
+  mName: Right Back Drive
+  mType: com.snobot.simulator.simulator_components.ctre.CtreTalonSrxSpeedControllerSim
 mRelays: []
 mSimulatorComponents: []
+mSolenoids: []
