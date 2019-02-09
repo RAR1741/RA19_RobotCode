@@ -58,7 +58,8 @@ public class Robot extends TimedRobot {
   private Drivetrain drive;
   private DataLogger dataLogger;
   private LoggableNavX navX;
-  private UltrasonicSensor ultrasonicSensor;
+  private UltrasonicSensor ultrasonicSensorL;
+  private UltrasonicSensor ultrasonicSensorR;
   private DoubleSolenoid ledLights;
   private Timer timer;
   private double centerX = 0.0;
@@ -107,7 +108,9 @@ public class Robot extends TimedRobot {
     compressor.start();
 
     pressureSensor = new PressureSensor(new AnalogInput(0));
-    ultrasonicSensor = new UltrasonicSensor(new AnalogInput(1));
+    ultrasonicSensorL = new UltrasonicSensor(new AnalogInput(1));
+    ultrasonicSensorR = new UltrasonicSensor(new AnalogInput(1));
+
     navX = new LoggableNavX(Port.kMXP);
 
     xbc = new XboxController(0);
@@ -167,7 +170,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     logger.info("Entering autonomous mode.");
-    autoLineup = new AutoLineup(drive, ultrasonicSensor, navX, camera);
+    autoLineup = new AutoLineup(drive, ultrasonicSensorL, ultrasonicSensorR, navX, camera);
   }
 
   /**

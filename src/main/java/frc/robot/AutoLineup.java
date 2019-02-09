@@ -27,16 +27,18 @@ public class AutoLineup {
 
   private AutoLineupState state;
   private Drivetrain drive;
-  private UltrasonicSensor sensor;
+  private UltrasonicSensor sensorL;
+  private UltrasonicSensor sensorR;
   private LoggableNavX navx;
   private VisionThread visionThread;
   private double centerX;
   private final Object imgLock = new Object();
 
-  public AutoLineup(Drivetrain drive, UltrasonicSensor sensor, LoggableNavX navx, UsbCamera camera){
+  public AutoLineup(Drivetrain drive, UltrasonicSensor sensorL, UltrasonicSensor sensorR, LoggableNavX navx, UsbCamera camera){
     state = AutoLineupState.LINING_UP;
     this.drive = drive;
-    this.sensor = sensor;
+    this.sensorL = sensorL;
+    this.sensorR = sensorR;
     this.navx = navx;
 
     visionThread = new VisionThread(camera, new MyVisionPipeline(), pipeline -> {
@@ -57,13 +59,13 @@ public class AutoLineup {
         error = getCameraDegree(centerX) * P;
         drive.drivePControl(error, 0.8, -1);
         if (error >= -1 || error <= 1){
-          directDistance = sensor.getDistance();
+          directDistance = getDistance();
           state = AutoLineupState.LINING_UP_2;
         }
         break;
 
       case LINING_UP_2:
-        error = (getTurnDegree(centerX, directDistance) - navx.getRoll()) * P;
+        error = (getTurnDegree(centerX, directDistance) - navx.getYaw()) * P;
         drive.drivePControl(error, 0.8, -1);
         if (error >= -1 || error  <= 1){
           state = AutoLineupState.DRIVING;
@@ -79,7 +81,7 @@ public class AutoLineup {
         break;
 
       case TURNING:
-        error = (90 - navx.getRoll()) * P;
+        error = (90 - navx.getYaw()) * P;
         drive.drivePControl(error, 0.8, -1);
         if (error >= -1 || error <= 1){
           state = AutoLineupState.IDLE;
@@ -89,6 +91,10 @@ public class AutoLineup {
       case IDLE:
         break;
     }
+  }
+
+  private double getDistance() {
+    return (sensorL.getDistance() + sensorR.getDistance()) / 2;
   }
 
   /*
