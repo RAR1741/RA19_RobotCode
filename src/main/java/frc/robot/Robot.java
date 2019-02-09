@@ -94,6 +94,9 @@ public class Robot extends TimedRobot {
   private void log()
   {
     dataLogger.log("timer", timer.get());
+    dataLogger.log("lineLeft", left.get());
+    dataLogger.log("lineCenter", middle.get());
+    dataLogger.log("lineRight", right.get());
     dataLogger.logAll();
     dataLogger.writeLine();
   }
@@ -101,6 +104,9 @@ public class Robot extends TimedRobot {
   private void setupDataLogging()
   {
     dataLogger.addAttribute("timer");
+    dataLogger.addAttribute("lineLeft");
+    dataLogger.addAttribute("lineCenter");
+    dataLogger.addAttribute("lineRight");
     dataLogger.addLoggable(drive);
     dataLogger.addLoggable(navX);
     dataLogger.setupLoggables();
@@ -145,6 +151,8 @@ public class Robot extends TimedRobot {
     xbc = new XboxController(0);
 
     left = new DigitalInput(1);
+    middle = new DigitalInput(2);
+    right = new DigitalInput(3);
 
     // If we're not in the matrix...
     if (!RuntimeDetector.isSimulation()) {
@@ -169,11 +177,7 @@ public class Robot extends TimedRobot {
     dataLogger = new DataLogger();
     String pathToLogFile = Filesystem.localPath("logs", "log.csv");
     dataLogger.open(pathToLogFile);
-    dataLogger.addAttribute("timer");
-    dataLogger.addLoggable(drive);
-    dataLogger.addLoggable(navX);
-    dataLogger.setupLoggables();
-    dataLogger.writeAttributes();
+    setupDataLogging();
 
     logger.info("Robot initialized.");
   }
@@ -230,7 +234,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     // Run teleop code (interpreting input, etc.)
-    System.out.println(String.format("Pressure: %2.2f", pressureSensor.getPressure()));
+    // System.out.println(String.format("Pressure: %2.2f", pressureSensor.getPressure()));
     drive.arcadeDrive(xbc.getX(GenericHID.Hand.kLeft),
                       xbc.getY(GenericHID.Hand.kLeft));
     log();
