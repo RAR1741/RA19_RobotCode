@@ -11,7 +11,7 @@ public class AutoLineup {
 
   private final int IMG_WIDTH = 640;
   private final int CAM_FOV = 60;
-  private final double TARGET_DISTANCE = 200;
+  private final double TARGET_DISTANCE = 40.5;
 
   private double P; // Needes to be tuned
   private double error;
