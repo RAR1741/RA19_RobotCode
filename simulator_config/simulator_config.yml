@@ -25,11 +25,9 @@ mPwm:
     mInverted: true
     mMotorType: CIM
     mNumMotors: 1
-  mMotorSimConfig: !!com.snobot.simulator.motor_sim.RotationalLoadMotorSimulationConfig
-    mArmCenterOfMass: 0.0
-    mArmMass: 0.0
-    mConstantAssistTorque: 0.0
-    mOverCenterAssistTorque: 0.0
+  mMotorSimConfig: !!com.snobot.simulator.motor_sim.StaticLoadMotorSimulationConfig
+    mConversionFactor: 0.16666666666
+    mLoad: 0.6
   mName: Left Front Drive
   mType: com.snobot.simulator.simulator_components.ctre.CtreTalonSrxSpeedControllerSim
 - mHandle: 105
@@ -40,11 +38,9 @@ mPwm:
     mInverted: true
     mMotorType: CIM
     mNumMotors: 1
-  mMotorSimConfig: !!com.snobot.simulator.motor_sim.RotationalLoadMotorSimulationConfig
-    mArmCenterOfMass: 0.0
-    mArmMass: 0.0
-    mConstantAssistTorque: 0.0
-    mOverCenterAssistTorque: 0.0
+  mMotorSimConfig: !!com.snobot.simulator.motor_sim.StaticLoadMotorSimulationConfig
+    mConversionFactor: 0.16666666666
+    mLoad: 0.6
   mName: Left Back Drive
   mType: com.snobot.simulator.simulator_components.ctre.CtreTalonSrxSpeedControllerSim
 - mHandle: 106
@@ -55,11 +51,9 @@ mPwm:
     mInverted: false
     mMotorType: CIM
     mNumMotors: 1
-  mMotorSimConfig: !!com.snobot.simulator.motor_sim.RotationalLoadMotorSimulationConfig
-    mArmCenterOfMass: 0.0
-    mArmMass: 0.0
-    mConstantAssistTorque: 0.0
-    mOverCenterAssistTorque: 0.0
+  mMotorSimConfig: !!com.snobot.simulator.motor_sim.StaticLoadMotorSimulationConfig
+    mConversionFactor: 0.16666666666
+    mLoad: 0.6
   mName: Right Front Drive
   mType: com.snobot.simulator.simulator_components.ctre.CtreTalonSrxSpeedControllerSim
 - mHandle: 107
@@ -70,11 +64,9 @@ mPwm:
     mInverted: false
     mMotorType: CIM
     mNumMotors: 1
-  mMotorSimConfig: !!com.snobot.simulator.motor_sim.RotationalLoadMotorSimulationConfig
-    mArmCenterOfMass: 0.0
-    mArmMass: 0.0
-    mConstantAssistTorque: 0.0
-    mOverCenterAssistTorque: 0.0
+  mMotorSimConfig: !!com.snobot.simulator.motor_sim.StaticLoadMotorSimulationConfig
+    mConversionFactor: 0.16666666666
+    mLoad: 0.6
   mName: Right Back Drive
   mType: com.snobot.simulator.simulator_components.ctre.CtreTalonSrxSpeedControllerSim
 mRelays: []
