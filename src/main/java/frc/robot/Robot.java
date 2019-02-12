@@ -94,9 +94,9 @@ public class Robot extends TimedRobot {
   private void log()
   {
     dataLogger.log("timer", timer.get());
-    dataLogger.log("leftLine", leftLine.get());
-    dataLogger.log("centerLine", midLine.get());
-    dataLogger.log("rightLine", rightLine.get());
+    dataLogger.log("lineLeft", leftLine.get());
+    dataLogger.log("lineCenter", midLine.get());
+    dataLogger.log("lineRight", rightLine.get());
     dataLogger.logAll();
     dataLogger.writeLine();
   }
@@ -104,9 +104,9 @@ public class Robot extends TimedRobot {
   private void setupDataLogging()
   {
     dataLogger.addAttribute("timer");
-    dataLogger.addAttribute("leftLine");
-    dataLogger.addAttribute("centerLine");
-    dataLogger.addAttribute("rightLine");
+    dataLogger.addAttribute("lineLeft");
+    dataLogger.addAttribute("lineCenter");
+    dataLogger.addAttribute("lineRight");
     dataLogger.addLoggable(drive);
     dataLogger.addLoggable(navX);
     dataLogger.setupLoggables();
