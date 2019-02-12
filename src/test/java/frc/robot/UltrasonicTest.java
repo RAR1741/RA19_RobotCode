@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import edu.wpi.first.wpilibj.*;
 
-public class UltrasonicTest{
+public class UltrasonicTest {
   // Floating point math is inexeact, agreeing to 1x10^-3 should be
   // good enough.
   // In addition, the ultrasonic calculation is not exact, so we'll

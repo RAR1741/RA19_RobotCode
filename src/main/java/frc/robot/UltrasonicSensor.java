@@ -12,6 +12,7 @@ public class UltrasonicSensor {
 
   /**
    * Get current distance in centimeters.
+   *
    * @return double distance in centimeters.
    */
   public double getDistance() {
