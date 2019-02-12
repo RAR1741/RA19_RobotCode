@@ -1,9 +1,8 @@
-/*----------------------------------------------------------------------------*/
-/* Copyright (c) 2017-2018 FIRST. All Rights Reserved.                        */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */
-/* must be accompanied by the FIRST BSD license file in the root directory of */
-/* the project.                                                               */
-/*----------------------------------------------------------------------------*/
+/*
+ * Copyright (c) 2017-2018 FIRST. All Rights Reserved. Open Source Software - may be modified and
+ * shared by FRC teams. The code must be accompanied by the FIRST BSD license file in the root
+ * directory of the project.
+ */
 
 package frc.robot;
 
@@ -14,12 +13,9 @@ import java.util.Date;
 import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import com.moandjiezana.toml.Toml;
-
 import org.opencv.core.Rect;
 import org.opencv.imgproc.Imgproc;
-
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.vision.VisionThread;
@@ -80,8 +76,7 @@ public class Robot extends TimedRobot {
     }
   }
 
-  public void startDataLogging(String mode)
-  {
+  public void startDataLogging(String mode) {
     String dir = Filesystem.localPath("logs");
     new File(dir).mkdirs();
     TimeZone tz = TimeZone.getTimeZone("EST");
@@ -91,8 +86,7 @@ public class Robot extends TimedRobot {
     setupDataLogging();
   }
 
-  private void log()
-  {
+  private void log() {
     dataLogger.log("timer", timer.get());
     dataLogger.log("lineLeft", leftLine.get());
     dataLogger.log("lineCenter", midLine.get());
@@ -101,8 +95,7 @@ public class Robot extends TimedRobot {
     dataLogger.writeLine();
   }
 
-  private void setupDataLogging()
-  {
+  private void setupDataLogging() {
     dataLogger.addAttribute("timer");
     dataLogger.addAttribute("lineLeft");
     dataLogger.addAttribute("lineCenter");
@@ -136,7 +129,7 @@ public class Robot extends TimedRobot {
     }
 
     logger.info("Starting drivetrain...");
-    drive = new Drivetrain(4,5,6,7);
+    drive = new Drivetrain(4, 5, 6, 7);
     logger.info("Drivetrain started");
 
     configureLogging();
@@ -234,8 +227,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     // Run teleop code (interpreting input, etc.)
-    drive.arcadeDrive(xbc.getX(GenericHID.Hand.kLeft),
-                      xbc.getY(GenericHID.Hand.kLeft));
+    drive.arcadeDrive(xbc.getX(GenericHID.Hand.kLeft), xbc.getY(GenericHID.Hand.kLeft));
     log();
   }
 
