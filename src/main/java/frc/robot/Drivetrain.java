@@ -95,8 +95,8 @@ public class Drivetrain implements Loggable {
   public void log(DataLogger logger) {
     for (var entry : motorsByName()) {
       var talon = entry.getValue();
-      logger.log(entry.getKey()+"Current", talon.getOutputCurrent());
-      logger.log(entry.getKey()+"Voltage", talon.getBusVoltage());
+      logger.log(entry.getKey()+"Current", getOutputCurrent(talon));
+      logger.log(entry.getKey()+"Voltage", getBusVoltage(talon));
       logger.log(entry.getKey()+"Value", talon.get());
       logger.log(entry.getKey()+"Position", talon.getSelectedSensorPosition());
       logger.log(entry.getKey()+"Velocity", talon.getSelectedSensorVelocity());
@@ -116,5 +116,21 @@ public class Drivetrain implements Loggable {
     list.add(Map.entry("RightRear", this.rightSlave));
 
     return list;
+  }
+
+  public Double getOutputCurrent(WPI_TalonSRX talon) {
+    if (RuntimeDetector.isSimulation()) {
+      return 0.0;
+    } else {
+      return talon.getOutputCurrent();
+    }
+  }
+
+  public Double getBusVoltage(WPI_TalonSRX talon) {
+    if (RuntimeDetector.isSimulation()) {
+      return 0.0;
+    } else {
+      return talon.getBusVoltage();
+    }
   }
 }
