@@ -54,9 +54,9 @@ public class Robot extends TimedRobot {
   private final int IMG_HEIGHT = 480;
   private UsbCamera camera;
   private Compressor compressor;
-  private DigitalInput left;
-  private DigitalInput middle;
-  private DigitalInput right;
+  private DigitalInput leftLine;
+  private DigitalInput midLine;
+  private DigitalInput rightLine;
   private PressureSensor pressureSensor;
   private XboxController xbc;
   private Drivetrain drive;
@@ -94,6 +94,9 @@ public class Robot extends TimedRobot {
   private void log()
   {
     dataLogger.log("timer", timer.get());
+    dataLogger.log("lineLeft", leftLine.get());
+    dataLogger.log("lineCenter", midLine.get());
+    dataLogger.log("lineRight", rightLine.get());
     dataLogger.logAll();
     dataLogger.writeLine();
   }
@@ -101,6 +104,9 @@ public class Robot extends TimedRobot {
   private void setupDataLogging()
   {
     dataLogger.addAttribute("timer");
+    dataLogger.addAttribute("lineLeft");
+    dataLogger.addAttribute("lineCenter");
+    dataLogger.addAttribute("lineRight");
     dataLogger.addLoggable(drive);
     dataLogger.addLoggable(navX);
     dataLogger.setupLoggables();
@@ -144,7 +150,9 @@ public class Robot extends TimedRobot {
 
     xbc = new XboxController(0);
 
-    left = new DigitalInput(1);
+    leftLine = new DigitalInput(1);
+    midLine = new DigitalInput(2);
+    rightLine = new DigitalInput(3);
 
     // If we're not in the matrix...
     if (!RuntimeDetector.isSimulation()) {
@@ -169,11 +177,7 @@ public class Robot extends TimedRobot {
     dataLogger = new DataLogger();
     String pathToLogFile = Filesystem.localPath("logs", "log.csv");
     dataLogger.open(pathToLogFile);
-    dataLogger.addAttribute("timer");
-    dataLogger.addLoggable(drive);
-    dataLogger.addLoggable(navX);
-    dataLogger.setupLoggables();
-    dataLogger.writeAttributes();
+    setupDataLogging();
 
     logger.info("Robot initialized.");
   }
