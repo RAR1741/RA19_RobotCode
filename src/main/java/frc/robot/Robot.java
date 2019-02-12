@@ -54,9 +54,9 @@ public class Robot extends TimedRobot {
   private final int IMG_HEIGHT = 480;
   private UsbCamera camera;
   private Compressor compressor;
-  private DigitalInput left;
-  private DigitalInput middle;
-  private DigitalInput right;
+  private DigitalInput leftLine;
+  private DigitalInput midLine;
+  private DigitalInput rightLine;
   private PressureSensor pressureSensor;
   private XboxController xbc;
   private Drivetrain drive;
@@ -94,9 +94,9 @@ public class Robot extends TimedRobot {
   private void log()
   {
     dataLogger.log("timer", timer.get());
-    dataLogger.log("lineLeft", left.get());
-    dataLogger.log("lineCenter", middle.get());
-    dataLogger.log("lineRight", right.get());
+    dataLogger.log("lineLeft", leftLine.get());
+    dataLogger.log("lineCenter", midLine.get());
+    dataLogger.log("lineRight", rightLine.get());
     dataLogger.logAll();
     dataLogger.writeLine();
   }
@@ -150,9 +150,9 @@ public class Robot extends TimedRobot {
 
     xbc = new XboxController(0);
 
-    left = new DigitalInput(1);
-    middle = new DigitalInput(2);
-    right = new DigitalInput(3);
+    leftLine = new DigitalInput(1);
+    midLine = new DigitalInput(2);
+    rightLine = new DigitalInput(3);
 
     // If we're not in the matrix...
     if (!RuntimeDetector.isSimulation()) {
@@ -234,7 +234,6 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     // Run teleop code (interpreting input, etc.)
-    // System.out.println(String.format("Pressure: %2.2f", pressureSensor.getPressure()));
     drive.arcadeDrive(xbc.getX(GenericHID.Hand.kLeft),
                       xbc.getY(GenericHID.Hand.kLeft));
     log();
