@@ -5,16 +5,13 @@ import edu.wpi.first.wpilibj.SPI.Port;
 import frc.robot.logging.DataLogger;
 import frc.robot.logging.Loggable;
 
-public class LoggableNavX extends AHRS implements Loggable
-{
-  public LoggableNavX(Port spiPortId)
-  {
+public class LoggableNavX extends AHRS implements Loggable {
+  public LoggableNavX(Port spiPortId) {
     super(spiPortId);
   }
 
   @Override
-  public void setupLogging(DataLogger logger)
-  {
+  public void setupLogging(DataLogger logger) {
     logger.addAttribute("navx_Pitch");
     logger.addAttribute("navx_Roll");
     logger.addAttribute("navx_Yaw");
@@ -29,8 +26,7 @@ public class LoggableNavX extends AHRS implements Loggable
   }
 
   @Override
-  public void log(DataLogger logger)
-  {
+  public void log(DataLogger logger) {
     logger.log("navx_Pitch", getPitch());
     logger.log("navx_Roll", getRoll());
     logger.log("navx_Yaw", getYaw());

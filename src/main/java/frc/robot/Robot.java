@@ -1,21 +1,21 @@
-/*----------------------------------------------------------------------------*/
-/* Copyright (c) 2017-2018 FIRST. All Rights Reserved.                        */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */
-/* must be accompanied by the FIRST BSD license file in the root directory of */
-/* the project.                                                               */
-/*----------------------------------------------------------------------------*/
+/*
+ * Copyright (c) 2017-2018 FIRST. All Rights Reserved. Open Source Software - may be modified and
+ * shared by FRC teams. The code must be accompanied by the FIRST BSD license file in the root
+ * directory of the project.
+ */
 
 package frc.robot;
 
 import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import com.moandjiezana.toml.Toml;
-
 import org.opencv.core.Rect;
 import org.opencv.imgproc.Imgproc;
-
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.vision.VisionThread;
@@ -50,9 +50,9 @@ public class Robot extends TimedRobot {
   private final int IMG_HEIGHT = 480;
   private UsbCamera camera;
   private Compressor compressor;
-  private DigitalInput left;
-  private DigitalInput middle;
-  private DigitalInput right;
+  private DigitalInput leftLine;
+  private DigitalInput midLine;
+  private DigitalInput rightLine;
   private PressureSensor pressureSensor;
   private XboxController xbc;
   private Drivetrain drive;
@@ -74,6 +74,36 @@ public class Robot extends TimedRobot {
     } catch (Exception ex) {
       logger.severe(String.format("Couldn't set log level: %s", ex.getMessage()));
     }
+  }
+
+  public void startDataLogging(String mode) {
+    String dir = Filesystem.localPath("logs");
+    new File(dir).mkdirs();
+    TimeZone tz = TimeZone.getTimeZone("EST");
+    DateFormat df = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
+    df.setTimeZone(tz);
+    dataLogger.open(dir + "/log-" + df.format(new Date()) + "_" + mode + ".csv");
+    setupDataLogging();
+  }
+
+  private void log() {
+    dataLogger.log("timer", timer.get());
+    dataLogger.log("lineLeft", leftLine.get());
+    dataLogger.log("lineCenter", midLine.get());
+    dataLogger.log("lineRight", rightLine.get());
+    dataLogger.logAll();
+    dataLogger.writeLine();
+  }
+
+  private void setupDataLogging() {
+    dataLogger.addAttribute("timer");
+    dataLogger.addAttribute("lineLeft");
+    dataLogger.addAttribute("lineCenter");
+    dataLogger.addAttribute("lineRight");
+    dataLogger.addLoggable(drive);
+    dataLogger.addLoggable(navX);
+    dataLogger.setupLoggables();
+    dataLogger.writeAttributes();
   }
 
   /**
@@ -99,7 +129,7 @@ public class Robot extends TimedRobot {
     }
 
     logger.info("Starting drivetrain...");
-    drive = new Drivetrain(4,5,6,7);
+    drive = new Drivetrain(4, 5, 6, 7);
     logger.info("Drivetrain started");
 
     configureLogging();
@@ -115,7 +145,9 @@ public class Robot extends TimedRobot {
 
     xbc = new XboxController(0);
 
-    left = new DigitalInput(1);
+    leftLine = new DigitalInput(1);
+    midLine = new DigitalInput(2);
+    rightLine = new DigitalInput(3);
 
     // If we're not in the matrix...
     if (!RuntimeDetector.isSimulation()) {
@@ -132,11 +164,7 @@ public class Robot extends TimedRobot {
     dataLogger = new DataLogger();
     String pathToLogFile = Filesystem.localPath("logs", "log.csv");
     dataLogger.open(pathToLogFile);
-    dataLogger.addAttribute("timer");
-    dataLogger.addLoggable(drive);
-    dataLogger.addLoggable(navX);
-    dataLogger.setupLoggables();
-    dataLogger.writeAttributes();
+    setupDataLogging();
 
     logger.info("Robot initialized.");
   }
@@ -171,6 +199,7 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     logger.info("Entering autonomous mode.");
     autoLineup = new AutoLineup(drive, ultrasonicSensorL, ultrasonicSensorR, navX, camera);
+    startDataLogging("auto");
   }
 
   /**
@@ -180,6 +209,12 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {
     // Run autonomous code (state machines, etc.)
     autoLineup.run();
+    log();
+  }
+
+  @Override
+  public void teleopInit() {
+    startDataLogging("teleop");
   }
 
   /**
@@ -188,9 +223,6 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     // Run teleop code (interpreting input, etc.)
-    System.out.println(String.format("Pressure: %2.2f", pressureSensor.getPressure()));
-    drive.arcadeDrive(xbc.getX(GenericHID.Hand.kLeft),
-                      xbc.getY(GenericHID.Hand.kLeft));
     if (xbc.getAButtonPressed()) {
       aButtonState = !aButtonState;
       if (aButtonState) {
@@ -198,10 +230,13 @@ public class Robot extends TimedRobot {
       }
     }
 
-    dataLogger.log("timer", timer.get());
-    drive.log(dataLogger);
-    navX.log(dataLogger);
-    dataLogger.writeLine();
+    drive.arcadeDrive(xbc.getX(GenericHID.Hand.kLeft), xbc.getY(GenericHID.Hand.kLeft));
+    log();
+  }
+
+  @Override
+  public void testInit() {
+    startDataLogging("test");
   }
 
   /**
@@ -209,6 +244,11 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void testPeriodic() {
-    // This isn't typically used in our programs.
+    log();
+  }
+
+  @Override
+  public void disabledInit() {
+    dataLogger.close();
   }
 }
