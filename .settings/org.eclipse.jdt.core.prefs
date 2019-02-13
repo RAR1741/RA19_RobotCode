@@ -1,6 +1,2 @@
-eclipse.preferences.version=1
+java.format.settings.url="https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml"
 java.format.settings.profile="GoogleStyle"
-java.format.settings.url="https\://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml"
-org.eclipse.jdt.core.compiler.codegen.targetPlatform=11
-org.eclipse.jdt.core.compiler.compliance=11
-org.eclipse.jdt.core.compiler.source=11
