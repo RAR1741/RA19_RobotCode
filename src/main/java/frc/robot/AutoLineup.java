@@ -22,6 +22,7 @@ public class AutoLineup {
     LINING_UP_2,
     DRIVING,
     TURNING,
+    LINE,
     IDLE;
   }
 
@@ -84,6 +85,13 @@ public class AutoLineup {
         error = (90 - navx.getYaw()) * P;
         drive.drivePControl(error, 0.8, -1);
         if (error >= -1 || error <= 1){
+          state = AutoLineupState.LINE;
+        }
+        break;
+
+      case LINE:
+        drive.followLine(0.5);
+        if (getDistance() <= 31) {
           state = AutoLineupState.IDLE;
         }
         break;

@@ -7,6 +7,7 @@ import java.util.Map;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.logging.DataLogger;
 import frc.robot.logging.Loggable;
 
@@ -27,6 +28,10 @@ public class Drivetrain implements Loggable {
   private WPI_TalonSRX rightTalon;
   private WPI_TalonSRX rightSlave;
 
+  private DigitalInput leftLine;
+  private DigitalInput midLine;
+  private DigitalInput rightLine;
+
   /**
    * Constructor
    *
@@ -35,7 +40,7 @@ public class Drivetrain implements Loggable {
    * @param rightTalon1Id The CAN id of the first right talon.
    * @param rightTalon2Id The CAN id of the second right talon.
    */
-  Drivetrain(int leftTalon1Id, int leftTalon2Id, int rightTalon1Id, int rightTalon2Id) {
+  Drivetrain(int leftTalon1Id, int leftTalon2Id, int rightTalon1Id, int rightTalon2Id, int leftLineId, int midLineId, int rightLineId) {
     leftTalon = new WPI_TalonSRX(leftTalon1Id);
     leftSlave = new WPI_TalonSRX(leftTalon2Id);
     rightTalon = new WPI_TalonSRX(rightTalon1Id);
@@ -46,6 +51,10 @@ public class Drivetrain implements Loggable {
 
     leftSlave.follow(leftTalon);
     rightSlave.follow(rightTalon);
+
+    leftLine = new DigitalInput(leftLineId);
+    midLine = new DigitalInput(midLineId);
+    rightLine = new DigitalInput(rightLineId);
   }
 
   /**
@@ -101,6 +110,9 @@ public class Drivetrain implements Loggable {
       logger.addAttribute(entry.getKey() + "Position");
       logger.addAttribute(entry.getKey() + "Velocity");
     }
+    logger.addAttribute("lineLeft");
+    logger.addAttribute("lineCenter");
+    logger.addAttribute("lineRight");
   }
 
   public void log(DataLogger logger) {
@@ -112,6 +124,9 @@ public class Drivetrain implements Loggable {
       logger.log(entry.getKey() + "Position", talon.getSelectedSensorPosition());
       logger.log(entry.getKey() + "Velocity", talon.getSelectedSensorVelocity());
     }
+    logger.log("lineLeft", leftLine.get());
+    logger.log("lineCenter", midLine.get());
+    logger.log("lineRight", rightLine.get());
   }
 
   /**
@@ -125,6 +140,28 @@ public class Drivetrain implements Loggable {
     double motorPower = maxMotorPercent * error;
     driveLeft(motorPower);
     driveRight(motorPower * isDrivingStraight);
+  }
+
+  /**
+   * Uses outside line sensors to follow the line.
+   *
+   * @param maxMotorPercent maximum motor percent
+   */
+  public void followLine(double maxMotorPercent) {
+    double leftMotorPower = 1;
+    double rightMotorPower = 1;
+    if (leftLine.get() && !rightLine.get()) {
+      leftMotorPower = 0.75;
+    }
+    if (!leftLine.get() && rightLine.get()) {
+      rightMotorPower = 0.75;
+    }
+    if (leftLine.get() && rightLine.get()) {
+      leftMotorPower = 0;
+      rightMotorPower = 0;
+    }
+    driveLeft(leftMotorPower * maxMotorPercent);
+    driveRight(rightMotorPower * maxMotorPercent);
   }
 
   /**
