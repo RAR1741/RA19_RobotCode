@@ -13,27 +13,20 @@ import java.util.Date;
 import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import com.moandjiezana.toml.Toml;
-import org.opencv.core.Rect;
-import org.opencv.imgproc.Imgproc;
+
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.vision.VisionThread;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.SPI.Port;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.logging.DataLogger;
-import frc.robot.Filesystem;
-import frc.robot.LoggableNavX;
-import frc.vision.MyVisionPipeline;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -130,7 +123,7 @@ public class Robot extends TimedRobot {
 
     pressureSensor = new PressureSensor(new AnalogInput(0));
     ultrasonicSensorL = new UltrasonicSensor(new AnalogInput(1));
-    ultrasonicSensorR = new UltrasonicSensor(new AnalogInput(1));
+    ultrasonicSensorR = new UltrasonicSensor(new AnalogInput(2));
 
     navX = new LoggableNavX(Port.kMXP);
 
