@@ -40,12 +40,12 @@ public class Drivetrain implements Loggable {
    * @param rightTalon1Id The CAN id of the first right talon.
    * @param rightTalon2Id The CAN id of the second right talon.
    */
-  Drivetrain(int leftTalon1Id, int leftTalon2Id, int rightTalon1Id, int rightTalon2Id, int leftLineId, int midLineId,
-      int rightLineId) {
-    leftTalon = new WPI_TalonSRX(leftTalon1Id);
-    leftSlave = new WPI_TalonSRX(leftTalon2Id);
-    rightTalon = new WPI_TalonSRX(rightTalon1Id);
-    rightSlave = new WPI_TalonSRX(rightTalon2Id);
+  Drivetrain(WPI_TalonSRX _leftTalon1, WPI_TalonSRX _leftTalon2, WPI_TalonSRX _rightTalon1, WPI_TalonSRX _rightTalon2,
+      DigitalInput _leftLine, DigitalInput _midLine, DigitalInput _rightLine) {
+    leftTalon = _leftTalon1;
+    leftSlave = _leftTalon2;
+    rightTalon = _rightTalon1;
+    rightSlave = _rightTalon2;
 
     leftTalon.setInverted(true);
     leftSlave.setInverted(true);
@@ -53,9 +53,9 @@ public class Drivetrain implements Loggable {
     leftSlave.follow(leftTalon);
     rightSlave.follow(rightTalon);
 
-    leftLine = new DigitalInput(leftLineId);
-    midLine = new DigitalInput(midLineId);
-    rightLine = new DigitalInput(rightLineId);
+    leftLine = _leftLine;
+    midLine = _midLine;
+    rightLine = _rightLine;
   }
 
   /**

@@ -14,12 +14,14 @@ import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.moandjiezana.toml.Toml;
 
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.SPI.Port;
@@ -113,7 +115,8 @@ public class Robot extends TimedRobot {
     }
 
     logger.info("Starting drivetrain...");
-    drive = new Drivetrain(4, 5, 6, 7, 1, 2, 3);
+    drive = new Drivetrain(new WPI_TalonSRX(4), new WPI_TalonSRX(5), new WPI_TalonSRX(6), new WPI_TalonSRX(7),
+        new DigitalInput(1), new DigitalInput(2), new DigitalInput(3));
     logger.info("Drivetrain started");
 
     configureLogging();
