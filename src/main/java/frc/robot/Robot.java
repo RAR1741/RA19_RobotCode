@@ -13,27 +13,22 @@ import java.util.Date;
 import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.moandjiezana.toml.Toml;
-import org.opencv.core.Rect;
-import org.opencv.imgproc.Imgproc;
+
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.vision.VisionThread;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.SPI.Port;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.logging.DataLogger;
-import frc.robot.Filesystem;
-import frc.robot.LoggableNavX;
-import frc.vision.MyVisionPipeline;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -50,22 +45,19 @@ public class Robot extends TimedRobot {
   private final int IMG_HEIGHT = 480;
   private UsbCamera camera;
   private Compressor compressor;
-  private DigitalInput leftLine;
-  private DigitalInput midLine;
-  private DigitalInput rightLine;
   private PressureSensor pressureSensor;
   private XboxController xbc;
   private Drivetrain drive;
   private DataLogger dataLogger;
   private LoggableNavX navX;
-  private UltrasonicSensor ultrasonicSensor;
+  private UltrasonicSensor ultrasonicSensorL;
+  private UltrasonicSensor ultrasonicSensorR;
   private DoubleSolenoid ledLights;
   private Timer timer;
-
-  private VisionThread visionThread;
   private double centerX = 0.0;
+  private AutoLineup autoLineup;
 
-  private final Object imgLock = new Object();
+  private boolean aButtonState = false;
 
   private void configureLogging() {
     try {
@@ -88,18 +80,12 @@ public class Robot extends TimedRobot {
 
   private void log() {
     dataLogger.log("timer", timer.get());
-    dataLogger.log("lineLeft", leftLine.get());
-    dataLogger.log("lineCenter", midLine.get());
-    dataLogger.log("lineRight", rightLine.get());
     dataLogger.logAll();
     dataLogger.writeLine();
   }
 
   private void setupDataLogging() {
     dataLogger.addAttribute("timer");
-    dataLogger.addAttribute("lineLeft");
-    dataLogger.addAttribute("lineCenter");
-    dataLogger.addAttribute("lineRight");
     dataLogger.addLoggable(drive);
     dataLogger.addLoggable(navX);
     dataLogger.setupLoggables();
@@ -129,7 +115,8 @@ public class Robot extends TimedRobot {
     }
 
     logger.info("Starting drivetrain...");
-    drive = new Drivetrain(4, 5, 6, 7);
+    drive = new Drivetrain(new WPI_TalonSRX(4), new WPI_TalonSRX(5), new WPI_TalonSRX(6), new WPI_TalonSRX(7),
+        new DigitalInput(1), new DigitalInput(2), new DigitalInput(3));
     logger.info("Drivetrain started");
 
     configureLogging();
@@ -138,14 +125,12 @@ public class Robot extends TimedRobot {
     compressor.start();
 
     pressureSensor = new PressureSensor(new AnalogInput(0));
-    ultrasonicSensor = new UltrasonicSensor(new AnalogInput(1));
+    ultrasonicSensorL = new UltrasonicSensor(new AnalogInput(1));
+    ultrasonicSensorR = new UltrasonicSensor(new AnalogInput(2));
+
     navX = new LoggableNavX(Port.kMXP);
 
     xbc = new XboxController(0);
-
-    leftLine = new DigitalInput(1);
-    midLine = new DigitalInput(2);
-    rightLine = new DigitalInput(3);
 
     // If we're not in the matrix...
     if (!RuntimeDetector.isSimulation()) {
@@ -155,16 +140,6 @@ public class Robot extends TimedRobot {
       camera = CameraServer.getInstance().startAutomaticCapture();
       camera.setResolution(IMG_WIDTH, IMG_HEIGHT);
 
-      visionThread = new VisionThread(camera, new MyVisionPipeline(), pipeline -> {
-        if (!pipeline.filterContoursOutput().isEmpty()) {
-          Rect r = Imgproc.boundingRect(pipeline.filterContoursOutput().get(0));
-          synchronized (imgLock) {
-            centerX = r.x + (r.width / 2);
-            System.out.println("Camera: " + centerX);
-          }
-        }
-      });
-      visionThread.start();
     }
 
     dataLogger = new DataLogger();
@@ -204,6 +179,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     logger.info("Entering autonomous mode.");
+    autoLineup = new AutoLineup(drive, ultrasonicSensorL, ultrasonicSensorR, navX, camera);
     startDataLogging("auto");
   }
 
@@ -213,6 +189,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     // Run autonomous code (state machines, etc.)
+    autoLineup.run();
     log();
   }
 
@@ -227,6 +204,13 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     // Run teleop code (interpreting input, etc.)
+    if (xbc.getAButtonPressed()) {
+      aButtonState = !aButtonState;
+      if (aButtonState) {
+        autoLineup.run();
+      }
+    }
+
     drive.arcadeDrive(xbc.getX(GenericHID.Hand.kLeft), xbc.getY(GenericHID.Hand.kLeft));
     log();
   }
