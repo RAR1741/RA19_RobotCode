@@ -32,6 +32,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.logging.DataLogger;
 import frc.robot.Filesystem;
+import frc.robot.loggable.LoggableDoubleSolenoid;
 import frc.robot.loggable.LoggableNavX;
 import frc.robot.loggable.LoggableTalonSRX;
 import frc.vision.MyVisionPipeline;
@@ -59,6 +60,7 @@ public class Robot extends TimedRobot {
   private XboxController operator;
   private Drivetrain drive;
   private Manipulation manipulation;
+  private Scoring scoring;
   private DataLogger dataLogger;
   private LoggableNavX navX;
   private UltrasonicSensor ultrasonicSensor;
@@ -106,6 +108,7 @@ public class Robot extends TimedRobot {
     dataLogger.addLoggable(drive);
     dataLogger.addLoggable(navX);
     dataLogger.addLoggable(manipulation);
+    dataLogger.addLoggable(scoring);
     dataLogger.setupLoggables();
     dataLogger.writeAttributes();
   }
@@ -139,6 +142,11 @@ public class Robot extends TimedRobot {
     logger.info("Starting manipulation...");
     manipulation = new Manipulation(new LoggableTalonSRX(8));
     logger.info("Manipulation started");
+
+    logger.info("Starting scoring...");
+    // TODO: Get actual CAN assignments
+    scoring = new Scoring(new LoggableTalonSRX(9), new LoggableTalonSRX(10), new LoggableDoubleSolenoid(2, 0, 1),
+        new LoggableDoubleSolenoid(2, 2, 3));
 
     configureLogging();
 
@@ -237,7 +245,19 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     // Run teleop code (interpreting input, etc.)
     drive.arcadeDrive(driver.getX(GenericHID.Hand.kLeft), driver.getY(GenericHID.Hand.kLeft));
-    manipulation.lift(operator.getX(Hand.kRight));
+    manipulation.lift(operator.getX(Hand.kLeft));
+    scoring.tilt(operator.getX(Hand.kRight));
+    if (operator.getAButtonPressed()) {
+      scoring.push();
+    } else if (operator.getBButton()) {
+      scoring.retract();
+    }
+
+    double speedLeft = operator.getTriggerAxis(Hand.kLeft);
+    double speedRight = operator.getTriggerAxis(Hand.kRight);
+
+    double collectionSpeed = speedRight - speedLeft;
+    scoring.roll(collectionSpeed);
     log();
   }
 
