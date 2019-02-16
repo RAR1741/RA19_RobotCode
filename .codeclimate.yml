@@ -1,0 +1,8 @@
+version: "2"
+exclude_patterns:
+ - "src/main/java/frc/vision/MyVisionPipeline.java"
+checks:
+  method-complexity:
+    enabled: true
+    config:
+      threshold: 7
