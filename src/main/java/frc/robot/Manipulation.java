@@ -1,23 +1,22 @@
 package frc.robot;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-
+import frc.robot.loggable.LoggableTalonSRX;
 import frc.robot.logging.DataLogger;
 import frc.robot.logging.Loggable;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.Faults;
 
 public class Manipulation implements Loggable {
-  private WPI_TalonSRX liftTalon;
+  private LoggableTalonSRX liftTalon;
 
   /**
    * Constructor
    *
    * @param liftCanId The CAN id of the talon for the lift motor
    */
-  Manipulation(int liftCanId) {
-    liftTalon = new WPI_TalonSRX(liftCanId);
+  Manipulation(LoggableTalonSRX liftCan) {
+    liftTalon = liftCan;
+    liftTalon.setName("Lift");
   }
 
   /**
@@ -30,21 +29,10 @@ public class Manipulation implements Loggable {
   }
 
   public void setupLogging(DataLogger dl) {
-    // TODO: Log all talon attributes
-    dl.addAttribute("liftInput");
-    dl.addAttribute("liftCurrent");
-    dl.addAttribute("liftPosition");
-    dl.addAttribute("liftFwdLimit");
-    dl.addAttribute("liftRevLimit");
+    dl.addLoggable(liftTalon);
   }
 
   public void log(DataLogger dl) {
-    Faults faults = new Faults();
-    liftTalon.getFaults(faults);
-    dl.log("liftInput", liftTalon.get());
-    dl.log("liftCurrent", liftTalon.getOutputCurrent());
-    dl.log("liftPosition", liftTalon.getSelectedSensorPosition());
-    dl.log("liftFwdLimit", faults.ForwardLimitSwitch);
-    dl.log("liftRevLimit", faults.ReverseLimitSwitch);
+    // logAll will handle it
   }
 }

@@ -33,6 +33,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.logging.DataLogger;
 import frc.robot.Filesystem;
 import frc.robot.loggable.LoggableNavX;
+import frc.robot.loggable.LoggableTalonSRX;
 import frc.vision.MyVisionPipeline;
 
 /**
@@ -136,7 +137,7 @@ public class Robot extends TimedRobot {
     logger.info("Drivetrain started");
 
     logger.info("Starting manipulation...");
-    manipulation = new Manipulation(8);
+    manipulation = new Manipulation(new LoggableTalonSRX(8));
     logger.info("Manipulation started");
 
     configureLogging();
