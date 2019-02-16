@@ -152,6 +152,10 @@ public class Drivetrain implements Loggable, Configurable {
    * Configures the drivetrain.
    */
   public void configure(Toml config) {
-    // Nothing yet. PID constants, etc. go here.
+    for (var record : motorsByName()) {
+      record.getValue().config_kP(0, config.getDouble("drivetrain.p", 1.0));
+      record.getValue().config_kI(0, config.getDouble("drivetrain.i", 0.0));
+      record.getValue().config_kD(0, config.getDouble("drivetrain.d", 0.0));
+    }
   }
 }
