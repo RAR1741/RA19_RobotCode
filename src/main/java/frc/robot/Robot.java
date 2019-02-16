@@ -32,7 +32,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.logging.DataLogger;
 import frc.robot.Filesystem;
-import frc.robot.LoggableNavX;
+import frc.robot.loggable.LoggableNavX;
 import frc.vision.MyVisionPipeline;
 
 /**
