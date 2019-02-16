@@ -19,12 +19,13 @@ public class Scoring implements Loggable {
   /**
    * Constructor
    *
-   * @param roller  The talon for the roller
-   * @param wrist   The talon for the wrist motor
-   * @param pushers The double solenoid for the pushers
+   * @param roller       The talon for the roller
+   * @param wrist        The talon for the wrist motor
+   * @param pushers      The double solenoid for the pushers
    * @param intakePivots The double solenoid for the intake pivot
    */
-  Scoring(LoggableTalonSRX roller, LoggableTalonSRX wrist, LoggableDoubleSolenoid pushers, LoggableDoubleSolenoid intakePivots) {
+  Scoring(LoggableTalonSRX roller, LoggableTalonSRX wrist, LoggableDoubleSolenoid pushers,
+      LoggableDoubleSolenoid intakePivots) {
     rollerTalon = roller;
     wristTalon = wrist;
     this.pushers = pushers;

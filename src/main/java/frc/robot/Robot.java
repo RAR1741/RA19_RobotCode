@@ -54,8 +54,10 @@ public class Robot extends TimedRobot {
   private DigitalInput midLine;
   private DigitalInput rightLine;
   private PressureSensor pressureSensor;
-  private XboxController xbc;
+  private XboxController driver;
+  private XboxController operator;
   private Drivetrain drive;
+  private Manipulation manipulation;
   private DataLogger dataLogger;
   private LoggableNavX navX;
   private UltrasonicSensor ultrasonicSensor;
@@ -102,6 +104,7 @@ public class Robot extends TimedRobot {
     dataLogger.addAttribute("lineRight");
     dataLogger.addLoggable(drive);
     dataLogger.addLoggable(navX);
+    dataLogger.addLoggable(manipulation);
     dataLogger.setupLoggables();
     dataLogger.writeAttributes();
   }
@@ -132,6 +135,10 @@ public class Robot extends TimedRobot {
     drive = new Drivetrain(4, 5, 6, 7);
     logger.info("Drivetrain started");
 
+    logger.info("Starting manipulation...");
+    manipulation = new Manipulation(8);
+    logger.info("Manipulation started");
+
     configureLogging();
 
     compressor = new Compressor(2);
@@ -141,7 +148,8 @@ public class Robot extends TimedRobot {
     ultrasonicSensor = new UltrasonicSensor(new AnalogInput(1));
     navX = new LoggableNavX(Port.kMXP);
 
-    xbc = new XboxController(0);
+    driver = new XboxController(0);
+    operator = new XboxController(1);
 
     leftLine = new DigitalInput(1);
     midLine = new DigitalInput(2);
@@ -227,7 +235,8 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     // Run teleop code (interpreting input, etc.)
-    drive.arcadeDrive(xbc.getX(GenericHID.Hand.kLeft), xbc.getY(GenericHID.Hand.kLeft));
+    drive.arcadeDrive(driver.getX(GenericHID.Hand.kLeft), driver.getY(GenericHID.Hand.kLeft));
+    manipulation.lift(operator.getX(Hand.kRight));
     log();
   }
 
