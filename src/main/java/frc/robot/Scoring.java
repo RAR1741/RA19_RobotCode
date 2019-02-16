@@ -14,6 +14,7 @@ public class Scoring implements Loggable {
   private LoggableTalonSRX rollerTalon;
   private LoggableTalonSRX wristTalon;
   private LoggableDoubleSolenoid pushers;
+  private LoggableDoubleSolenoid intakePivots;
 
   /**
    * Constructor
@@ -22,10 +23,11 @@ public class Scoring implements Loggable {
    * @param wrist   The talon for the wrist motor
    * @param pushers The double solenoid for the pushers
    */
-  Scoring(LoggableTalonSRX roller, LoggableTalonSRX wrist, LoggableDoubleSolenoid pushers) {
+  Scoring(LoggableTalonSRX roller, LoggableTalonSRX wrist, LoggableDoubleSolenoid pushers, LoggableDoubleSolenoid intakePivots) {
     rollerTalon = roller;
     wristTalon = wrist;
     this.pushers = pushers;
+    this.intakePivots = intakePivots;
 
     rollerTalon.setName("Roller");
     wristTalon.setName("Wrist");
@@ -44,19 +46,33 @@ public class Scoring implements Loggable {
   /**
    * Pushes the pneumatic actuators forwards.
    */
-  public void intakeDown() {
+  public void push() {
     pushers.set(LoggableDoubleSolenoid.Value.kForward);
   }
 
   /**
-   * Pushes the pneumatic actuators back in
+   * Pushes the pneumatic actuators back in.
    */
-  public void intakeUp() {
+  public void retract() {
     pushers.set(LoggableDoubleSolenoid.Value.kReverse);
   }
 
   /**
-   * Rotates the wrist motor
+   * Pushes the intake down.
+   */
+  public void intakeDown() {
+    intakePivots.set(LoggableDoubleSolenoid.Value.kForward);
+  }
+
+  /**
+   * Pulls the intake up.
+   */
+  public void intakeUp() {
+    intakePivots.set(LoggableDoubleSolenoid.Value.kReverse);
+  }
+
+  /**
+   * Rotates the wrist motor.
    *
    * @param speed the speed to rotate the wrist (ranges from -1.0 to 1.0)
    */
