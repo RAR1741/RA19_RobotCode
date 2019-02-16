@@ -27,23 +27,27 @@ public class ScoringTest {
     fakePivots = mock(LoggableDoubleSolenoid.class);
   }
 
+  private Scoring getTestScoreInstance() {
+    return new Scoring(fakeRoller, fakeWrist, fakePushers, fakePivots);
+  }
+
   @Test
   public void testRollers() {
-    Scoring scoring = new Scoring(fakeRoller, fakeWrist, fakePushers, fakePivots);
+    Scoring scoring = getTestScoreInstance();
     scoring.roll(0.5);
     verify(fakeRoller, times(1)).set(eq(ControlMode.PercentOutput), eq(0.5));
   }
 
   @Test
   public void testTilt() {
-    Scoring scoring = new Scoring(fakeRoller, fakeWrist, fakePushers, fakePivots);
+    Scoring scoring = getTestScoreInstance();
     scoring.tilt(0.7);
     verify(fakeWrist, times(1)).set(eq(ControlMode.PercentOutput), eq(0.7));
   }
 
   @Test
   public void testPush() {
-    Scoring scoring = new Scoring(fakeRoller, fakeWrist, fakePushers, fakePivots);
+    Scoring scoring = getTestScoreInstance();
     scoring.push();
     verify(fakePushers, times(1)).set(eq(LoggableDoubleSolenoid.Value.kForward));
   }
