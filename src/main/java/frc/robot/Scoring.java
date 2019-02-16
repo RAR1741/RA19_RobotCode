@@ -9,26 +9,22 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
  */
 public class Scoring {
     private WPI_TalonSRX rollerTalon;
-    private WPI_TalonSRX rotaterTalon;
+    private WPI_TalonSRX tiltTalon;
     private DoubleSolenoid pushers;
 
     /**
      * Constructor
-     * 
+     *
      * @param rollerCanId     The CAN id of the talon for the roller motor
-     * @param rotateCanId     The CAN id of the talon for the rotater motor
-     * @param tiltCanId       The CAN id of the talon for the tilt motor
-     *
-     * #TODO find some better name for "tiltMotor" cuz that's not what it does.
-     *
+     * @param tiltCanId     The CAN id of the talon for the tilt motor
+     *     *
      * @param pushersCanId    The CAN id of the pcm for the pushers
      * @param pushersChannel1 The channel number of the forward channel for the pushers
      * @param pushersChannel2 The channel number of the reverse channel for the pushers
      */
-    Scoring(int rollerCanId, int rotaterCanId, int tiltCanId, int pushersCanId, int pushersChannel1, int pushersChannel2) {
+    Scoring(int rollerCanId, int tiltCanId, int pushersCanId, int pushersChannel1, int pushersChannel2) {
         rollerTalon    = new WPI_TalonSRX(rollerCanId);
-        rotaterTalon   = new WPI_TalonSRX(rotaterCanId);
-        tiltTalon      = new WPI_TalonSRX(tiltCanId);
+        tiltTalon   = new WPI_TalonSRX(tiltCanId);
         pushers        = new DoubleSolenoid(pushersCanId, pushersChannel1, pushersChannel2);
     }
 
@@ -43,32 +39,22 @@ public class Scoring {
     /**
      * Pushes the pneumatic actuators forwards.
      */
-    public void push() {
+    public void intakeDown() {
         pushers.set(DoubleSolenoid.Value.kForward);
     }
 
     /**
      * Pushes the pneumatic actuators back in
      */
-    public void insertNameHerePls() {
-        pushers.set(DoubleSolenoid.Value.kForward);
+    public void intakeUp() {
+        pushers.set(DoubleSolenoid.Value.kReverse);
     }
 
     /**
-     * Extends the scoring subsystem
+     * Rotates the tilt motor
+     * @param speed the speed to rotate the tilter (ranges from -1.0 to 1.0)
      */
-    public void extend() {}
-
-    /**
-     * Retracts the scoring subsystem
-     */
-    public void retract() {}
-
-    /**
-     * Rotates the intake motor
-     * @param speed the speed to rotate the rotater (ranges from -1.0 to 1.0)
-     */
-    public void rotate(double speed) {
-        rotaterTalon.set(ControlMode.PercentOutput, speed);
+    public void tilt(double speed) {
+        tiltTalon.set(ControlMode.PercentOutput, speed);
     }
 }
