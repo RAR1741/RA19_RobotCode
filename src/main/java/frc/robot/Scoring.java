@@ -1,6 +1,6 @@
 package frc.robot;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid;
+import frc.robot.loggable.LoggableDoubleSolenoid;
 import frc.robot.loggable.LoggableTalonSRX;
 import frc.robot.logging.DataLogger;
 import frc.robot.logging.Loggable;
@@ -13,7 +13,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 public class Scoring implements Loggable {
   private LoggableTalonSRX rollerTalon;
   private LoggableTalonSRX wristTalon;
-  private DoubleSolenoid pushers;
+  private LoggableDoubleSolenoid pushers;
 
   /**
    * Constructor
@@ -22,7 +22,7 @@ public class Scoring implements Loggable {
    * @param wrist   The talon for the wrist motor
    * @param pushers The double solenoid for the pushers
    */
-  Scoring(LoggableTalonSRX roller, LoggableTalonSRX wrist, DoubleSolenoid pushers) {
+  Scoring(LoggableTalonSRX roller, LoggableTalonSRX wrist, LoggableDoubleSolenoid pushers) {
     rollerTalon = roller;
     wristTalon = wrist;
     this.pushers = pushers;
@@ -45,14 +45,14 @@ public class Scoring implements Loggable {
    * Pushes the pneumatic actuators forwards.
    */
   public void intakeDown() {
-    pushers.set(DoubleSolenoid.Value.kForward);
+    pushers.set(LoggableDoubleSolenoid.Value.kForward);
   }
 
   /**
    * Pushes the pneumatic actuators back in
    */
   public void intakeUp() {
-    pushers.set(DoubleSolenoid.Value.kReverse);
+    pushers.set(LoggableDoubleSolenoid.Value.kReverse);
   }
 
   /**
@@ -67,6 +67,7 @@ public class Scoring implements Loggable {
   public void setupLogging(DataLogger dl) {
     dl.addLoggable(wristTalon);
     dl.addLoggable(rollerTalon);
+    dl.addLoggable(pushers);
   }
 
   public void log(DataLogger dl) {
