@@ -104,6 +104,7 @@ public class Robot extends TimedRobot {
     dataLogger.addAttribute("lineRight");
     dataLogger.addLoggable(drive);
     dataLogger.addLoggable(navX);
+    dataLogger.addLoggable(manipulation);
     dataLogger.setupLoggables();
     dataLogger.writeAttributes();
   }
