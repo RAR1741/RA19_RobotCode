@@ -22,6 +22,7 @@ public class Scoring implements Loggable {
    * @param roller  The talon for the roller
    * @param wrist   The talon for the wrist motor
    * @param pushers The double solenoid for the pushers
+   * @param intakePivots The double solenoid for the intake pivot
    */
   Scoring(LoggableTalonSRX roller, LoggableTalonSRX wrist, LoggableDoubleSolenoid pushers, LoggableDoubleSolenoid intakePivots) {
     rollerTalon = roller;
@@ -32,6 +33,7 @@ public class Scoring implements Loggable {
     rollerTalon.setName("Roller");
     wristTalon.setName("Wrist");
     this.pushers.setName("Pushers");
+    this.intakePivots.setName("Pivots");
   }
 
   /**
@@ -84,6 +86,7 @@ public class Scoring implements Loggable {
     dl.addLoggable(wristTalon);
     dl.addLoggable(rollerTalon);
     dl.addLoggable(pushers);
+    dl.addLoggable(intakePivots);
   }
 
   public void log(DataLogger dl) {
