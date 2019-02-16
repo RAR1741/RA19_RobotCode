@@ -6,16 +6,18 @@ import java.util.Map;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.moandjiezana.toml.Toml;
 
 import frc.robot.logging.DataLogger;
 import frc.robot.logging.Loggable;
+import frc.robot.configuration.Configurable;
 
 /**
  * Drivetrain class for the 2019 robot drivetrain.
  *
  * @author iCodeCoolStuff
  */
-public class Drivetrain implements Loggable {
+public class Drivetrain implements Loggable, Configurable {
   /**
    * {@value #DEADBAND_LIMIT} The limit for when to stop the motor running if the
    * motor speed is too low.
@@ -144,5 +146,12 @@ public class Drivetrain implements Loggable {
     } else {
       return talon.getBusVoltage();
     }
+  }
+
+  /**
+   * Configures the drivetrain.
+   */
+  public void configure(Toml config) {
+    // Nothing yet. PID constants, etc. go here.
   }
 }

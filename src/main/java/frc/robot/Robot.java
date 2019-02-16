@@ -10,6 +10,8 @@ import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,6 +35,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.logging.DataLogger;
 import frc.robot.Filesystem;
 import frc.robot.LoggableNavX;
+import frc.robot.configuration.Configurable;
 import frc.vision.MyVisionPipeline;
 
 /**
@@ -64,6 +67,8 @@ public class Robot extends TimedRobot {
 
   private VisionThread visionThread;
   private double centerX = 0.0;
+
+  private List<Configurable> configurables;
 
   private final Object imgLock = new Object();
 
@@ -106,6 +111,23 @@ public class Robot extends TimedRobot {
     dataLogger.writeAttributes();
   }
 
+  private void loadConfigurationFile() {
+    try {
+      String pathToTomlFile = Filesystem.localDeployPath("robot.toml");
+      logger.info(String.format("Loading configuration file from \"%s\"", pathToTomlFile));
+      config = new Toml().read(new File(pathToTomlFile));
+    } catch (Exception ex) {
+      logger.severe(String.format("Couldn't load from file (falling back to empty): %s", ex.getMessage()));
+      config = new Toml();
+    }
+  }
+
+  private void updateConfigurables() {
+    for (var configurable : configurables) {
+      configurable.configure(config);
+    }
+  }
+
   /**
    * This function is run when the robot is first started up and should be used
    * for any initialization code.
@@ -113,23 +135,18 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     logger.info("Initializing robot...");
+    configurables = new LinkedList<Configurable>();
 
     logger.info("Starting timer...");
     timer = new Timer();
     timer.start();
     logger.info("Timer started");
 
-    try {
-      String pathToTomlFile = Filesystem.localDeployPath("robot.toml");
-      logger.info(String.format("Loading log file from \"%s\"", pathToTomlFile));
-      config = new Toml().read(new File(pathToTomlFile));
-    } catch (Exception ex) {
-      logger.severe(String.format("Couldn't load from file (falling back to empty): %s", ex.getMessage()));
-      config = new Toml();
-    }
+    loadConfigurationFile();
 
     logger.info("Starting drivetrain...");
     drive = new Drivetrain(4, 5, 6, 7);
+    configurables.add(drive);
     logger.info("Drivetrain started");
 
     configureLogging();
@@ -204,6 +221,8 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     logger.info("Entering autonomous mode.");
+    loadConfigurationFile();
+    updateConfigurables();
     startDataLogging("auto");
   }
 
@@ -218,6 +237,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    loadConfigurationFile();
+    updateConfigurables();
     startDataLogging("teleop");
   }
 
@@ -233,6 +254,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testInit() {
+    loadConfigurationFile();
+    updateConfigurables();
     startDataLogging("test");
   }
 
