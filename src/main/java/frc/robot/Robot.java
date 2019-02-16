@@ -105,11 +105,11 @@ public class Robot extends TimedRobot {
     dataLogger.addAttribute("lineLeft");
     dataLogger.addAttribute("lineCenter");
     dataLogger.addAttribute("lineRight");
-    dataLogger.addLoggable(drive);
-    dataLogger.addLoggable(navX);
-    dataLogger.addLoggable(manipulation);
-    dataLogger.addLoggable(scoring);
-    dataLogger.setupLoggables();
+    drive.setupLogging(dataLogger);
+    manipulation.setupLogging(dataLogger);
+    scoring.setupLogging(dataLogger);
+    navX.setupLogging(dataLogger);
+
     dataLogger.writeAttributes();
   }
 
@@ -135,6 +135,8 @@ public class Robot extends TimedRobot {
       config = new Toml();
     }
 
+    configureLogging();
+
     logger.info("Starting drivetrain...");
     drive = new Drivetrain(4, 5, 6, 7);
     logger.info("Drivetrain started");
@@ -147,8 +149,7 @@ public class Robot extends TimedRobot {
     // TODO: Get actual CAN assignments
     scoring = new Scoring(new LoggableTalonSRX(9), new LoggableTalonSRX(10), new LoggableDoubleSolenoid(2, 0, 1),
         new LoggableDoubleSolenoid(2, 2, 3));
-
-    configureLogging();
+    logger.info("Scoring started");
 
     compressor = new Compressor(2);
     compressor.start();
