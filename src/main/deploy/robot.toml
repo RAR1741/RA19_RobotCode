@@ -1,0 +1,5 @@
+# config file
+# Toml format, lol
+
+[log]
+level = "INFO"
