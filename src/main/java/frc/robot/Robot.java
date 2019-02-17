@@ -146,11 +146,11 @@ public class Robot extends TimedRobot {
     logger.info("Manipulation started");
 
     logger.info("Starting scoring...");
-    scoring = new Scoring(new LoggableTalonSRX(9), new LoggableTalonSRX(10), new LoggableDoubleSolenoid(2, 6, 7),
-        new LoggableDoubleSolenoid(2, 4, 5));
+    scoring = new Scoring(new LoggableTalonSRX(9), new LoggableTalonSRX(10), new LoggableDoubleSolenoid(2, 4, 5),
+        new LoggableDoubleSolenoid(2, 6, 7));
     logger.info("Scoring started");
 
-    compressor = new Compressor(2);
+    compressor = new Compressor(3);
     compressor.start();
 
     pressureSensor = new PressureSensor(new AnalogInput(0));
@@ -269,6 +269,7 @@ public class Robot extends TimedRobot {
       scoring.retract();
     }
 
+    // TODO: Make these config file entries
     double upSpeed = 0.60;
     double downSpeed = -0.30;
 
