@@ -146,9 +146,8 @@ public class Robot extends TimedRobot {
     logger.info("Manipulation started");
 
     logger.info("Starting scoring...");
-    // TODO: Get actual CAN assignments
-    scoring = new Scoring(new LoggableTalonSRX(9), new LoggableTalonSRX(10), new LoggableDoubleSolenoid(2, 0, 1),
-        new LoggableDoubleSolenoid(2, 2, 3));
+    scoring = new Scoring(new LoggableTalonSRX(9), new LoggableTalonSRX(10), new LoggableDoubleSolenoid(2, 6, 7),
+        new LoggableDoubleSolenoid(2, 4, 5));
     logger.info("Scoring started");
 
     compressor = new Compressor(2);
@@ -250,9 +249,23 @@ public class Robot extends TimedRobot {
     drive.tankDrive(driver.getY(GenericHID.Hand.kLeft), driver.getY(GenericHID.Hand.kRight));
     manipulation.lift(operator.getY(Hand.kLeft));
     scoring.tilt(operator.getY(Hand.kRight));
-    if (operator.getAButtonPressed()) {
+
+    switch (operator.getPOV()) {
+    case -1: // None
+      break;
+    case 0: // d-pad up
+      scoring.intakeDown();
+      break;
+    case 180: // d-pad down
+      scoring.intakeUp();
+      break;
+    default:
+      break;
+    }
+
+    if (operator.getAButton()) {
       scoring.push();
-    } else if (operator.getBButtonPressed()) {
+    } else {
       scoring.retract();
     }
 
