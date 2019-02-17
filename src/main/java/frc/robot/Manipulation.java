@@ -25,7 +25,7 @@ public class Manipulation implements Loggable {
    * @param speed the speed to rotate the motor (ranges from -1.0 to 1.0)
    */
   public void lift(double speed) {
-    liftTalon.set(ControlMode.PercentOutput, speed);
+    liftTalon.set(ControlMode.PercentOutput, -speed);
   }
 
   public void setupLogging(DataLogger dl) {

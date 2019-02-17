@@ -142,7 +142,7 @@ public class Robot extends TimedRobot {
     logger.info("Drivetrain started");
 
     logger.info("Starting manipulation...");
-    manipulation = new Manipulation(new LoggableTalonSRX(8));
+    manipulation = new Manipulation(new LoggableTalonSRX(12));
     logger.info("Manipulation started");
 
     logger.info("Starting scoring...");
@@ -166,24 +166,24 @@ public class Robot extends TimedRobot {
     rightLine = new DigitalInput(3);
 
     // If we're not in the matrix...
-    if (!RuntimeDetector.isSimulation()) {
-      ledLights = new DoubleSolenoid(1, 4, 5);
-      ledLights.set(DoubleSolenoid.Value.kForward);
+    // if (!RuntimeDetector.isSimulation()) {
+    // ledLights = new DoubleSolenoid(1, 4, 5);
+    // ledLights.set(DoubleSolenoid.Value.kForward);
 
-      camera = CameraServer.getInstance().startAutomaticCapture();
-      camera.setResolution(IMG_WIDTH, IMG_HEIGHT);
+    // camera = CameraServer.getInstance().startAutomaticCapture();
+    // camera.setResolution(IMG_WIDTH, IMG_HEIGHT);
 
-      visionThread = new VisionThread(camera, new MyVisionPipeline(), pipeline -> {
-        if (!pipeline.filterContoursOutput().isEmpty()) {
-          Rect r = Imgproc.boundingRect(pipeline.filterContoursOutput().get(0));
-          synchronized (imgLock) {
-            centerX = r.x + (r.width / 2);
-            System.out.println("Camera: " + centerX);
-          }
-        }
-      });
-      visionThread.start();
-    }
+    // visionThread = new VisionThread(camera, new MyVisionPipeline(), pipeline -> {
+    // if (!pipeline.filterContoursOutput().isEmpty()) {
+    // Rect r = Imgproc.boundingRect(pipeline.filterContoursOutput().get(0));
+    // synchronized (imgLock) {
+    // centerX = r.x + (r.width / 2);
+    // System.out.println("Camera: " + centerX);
+    // }
+    // }
+    // });
+    // visionThread.start();
+    // }
 
     dataLogger = new DataLogger();
     String pathToLogFile = Filesystem.localPath("logs", "log.csv");
@@ -245,13 +245,26 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     // Run teleop code (interpreting input, etc.)
-    drive.arcadeDrive(driver.getX(GenericHID.Hand.kLeft), driver.getY(GenericHID.Hand.kLeft));
+    // drive.arcadeDrive(driver.getX(GenericHID.Hand.kLeft),
+    // driver.getY(GenericHID.Hand.kLeft));
+    drive.tankDrive(driver.getY(GenericHID.Hand.kLeft), driver.getY(GenericHID.Hand.kRight));
     manipulation.lift(operator.getY(Hand.kLeft));
     scoring.tilt(operator.getY(Hand.kRight));
     if (operator.getAButtonPressed()) {
       scoring.push();
-    } else if (operator.getBButton()) {
+    } else if (operator.getBButtonPressed()) {
       scoring.retract();
+    }
+
+    double upSpeed = 0.60;
+    double downSpeed = -0.30;
+
+    if (operator.getXButton()) {
+      scoring.tilt(downSpeed);
+    } else if (operator.getYButton()) {
+      scoring.tilt(upSpeed);
+    } else {
+      scoring.tilt(0);
     }
 
     double speedLeft = operator.getTriggerAxis(Hand.kLeft);
