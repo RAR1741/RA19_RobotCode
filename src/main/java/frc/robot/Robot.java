@@ -246,8 +246,8 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     // Run teleop code (interpreting input, etc.)
     drive.arcadeDrive(driver.getX(GenericHID.Hand.kLeft), driver.getY(GenericHID.Hand.kLeft));
-    manipulation.lift(operator.getX(Hand.kLeft));
-    scoring.tilt(operator.getX(Hand.kRight));
+    manipulation.lift(operator.getY(Hand.kLeft));
+    scoring.tilt(operator.getY(Hand.kRight));
     if (operator.getAButtonPressed()) {
       scoring.push();
     } else if (operator.getBButton()) {
