@@ -84,13 +84,16 @@ public class Scoring implements Loggable {
   }
 
   public void setupLogging(DataLogger dl) {
-    dl.addLoggable(wristTalon);
-    dl.addLoggable(rollerTalon);
-    dl.addLoggable(pushers);
-    dl.addLoggable(intakePivots);
+    wristTalon.setupLogging(dl);
+    rollerTalon.setupLogging(dl);
+    pushers.setupLogging(dl);
+    intakePivots.setupLogging(dl);
   }
 
   public void log(DataLogger dl) {
-    // No-op, logAll should handle loggables
+    wristTalon.log(dl);
+    rollerTalon.log(dl);
+    pushers.log(dl);
+    intakePivots.log(dl);
   }
 }

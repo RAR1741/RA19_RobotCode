@@ -29,10 +29,10 @@ public class Manipulation implements Loggable {
   }
 
   public void setupLogging(DataLogger dl) {
-    dl.addLoggable(liftTalon);
+    liftTalon.setupLogging(dl);
   }
 
   public void log(DataLogger dl) {
-    // logAll will handle it
+    liftTalon.log(dl);
   }
 }

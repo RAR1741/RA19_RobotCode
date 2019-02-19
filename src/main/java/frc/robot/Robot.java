@@ -96,7 +96,11 @@ public class Robot extends TimedRobot {
     dataLogger.log("lineLeft", leftLine.get());
     dataLogger.log("lineCenter", midLine.get());
     dataLogger.log("lineRight", rightLine.get());
-    dataLogger.logAll();
+    drive.log(dataLogger);
+    manipulation.log(dataLogger);
+    scoring.log(dataLogger);
+    navX.log(dataLogger);
+
     dataLogger.writeLine();
   }
 
@@ -255,19 +259,21 @@ public class Robot extends TimedRobot {
       break;
     case 0: // d-pad up
       scoring.intakeDown();
+      scoring.push();
       break;
     case 180: // d-pad down
       scoring.intakeUp();
+      scoring.retract();
       break;
     default:
       break;
     }
 
-    if (operator.getAButton()) {
-      scoring.push();
-    } else {
-      scoring.retract();
-    }
+    // if (operator.getAButton()) {
+    // scoring.push();
+    // } else {
+    // scoring.retract();
+    // }
 
     // TODO: Make these config file entries
     double upSpeed = 0.60;
