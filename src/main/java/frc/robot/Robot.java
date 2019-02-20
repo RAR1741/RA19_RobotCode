@@ -150,8 +150,8 @@ public class Robot extends TimedRobot {
     logger.info("Manipulation started");
 
     logger.info("Starting scoring...");
-    scoring = new Scoring(new LoggableTalonSRX(9), new LoggableTalonSRX(10), new LoggableDoubleSolenoid(2, 4, 5),
-        new LoggableDoubleSolenoid(2, 6, 7));
+    scoring = new Scoring(new LoggableTalonSRX(9), new LoggableTalonSRX(10), new LoggableDoubleSolenoid(2, 6, 7),
+        new LoggableDoubleSolenoid(2, 4, 5));
     logger.info("Scoring started");
 
     compressor = new Compressor(3);
@@ -259,21 +259,21 @@ public class Robot extends TimedRobot {
       break;
     case 0: // d-pad up
       scoring.intakeDown();
-      scoring.push();
+      // scoring.push();
       break;
     case 180: // d-pad down
       scoring.intakeUp();
-      scoring.retract();
+      // scoring.retract();
       break;
     default:
       break;
     }
 
-    // if (operator.getAButton()) {
-    // scoring.push();
-    // } else {
-    // scoring.retract();
-    // }
+    if (operator.getAButton()) {
+      scoring.push();
+    } else {
+      scoring.retract();
+    }
 
     // TODO: Make these config file entries
     double upSpeed = 0.60;
