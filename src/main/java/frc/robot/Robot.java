@@ -275,18 +275,6 @@ public class Robot extends TimedRobot {
       scoring.retract();
     }
 
-    // TODO: Make these config file entries
-    double upSpeed = 0.60;
-    double downSpeed = -0.30;
-
-    if (operator.getXButton()) {
-      scoring.tilt(downSpeed);
-    } else if (operator.getYButton()) {
-      scoring.tilt(upSpeed);
-    } else {
-      scoring.tilt(0);
-    }
-
     double speedLeft = operator.getTriggerAxis(Hand.kLeft);
     double speedRight = operator.getTriggerAxis(Hand.kRight);
 
