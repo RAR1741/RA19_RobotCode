@@ -17,6 +17,6 @@ public class ManipulationTest {
     LoggableTalonSRX fakeTalon = mock(LoggableTalonSRX.class);
     Manipulation manipulation = new Manipulation(fakeTalon);
     manipulation.lift(0.75);
-    verify(fakeTalon, times(1)).set(eq(ControlMode.PercentOutput), eq(0.75));
+    verify(fakeTalon, times(1)).set(eq(ControlMode.PercentOutput), eq(-0.75));
   }
 }
