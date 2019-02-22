@@ -48,26 +48,20 @@ public class Manipulation implements Loggable {
   }
 
   /**
-   * Lifts lift to level 1.
+   * Lifts lift to a level.
+   *
+   * @param level what level it lifts to (1, 2, or 3)
    */
-  public void level1() {
-    error = (LIFTLEVEL1 - liftTalon.getSelectedSensorPosition()) * P;
-    liftPControl(error, 0.8);
-  }
-
-  /**
-   * Lifts lift to level 2.
-   */
-  public void level2() {
-    error = (LIFTLEVEL2 - liftTalon.getSelectedSensorPosition()) * P;
-    liftPControl(error, 0.8);
-  }
-
-  /**
-   * Lifts lift to level 3.
-   */
-  public void level3() {
-    error = (LIFTLEVEL3 - liftTalon.getSelectedSensorPosition()) * P;
+  public void liftLevel(int level) {
+    if (level == 1){
+      error = (LIFTLEVEL1 - liftTalon.getSelectedSensorPosition()) * P;
+    } else if (level == 2) {
+      error = (LIFTLEVEL2 - liftTalon.getSelectedSensorPosition()) * P;
+    } else if (level == 3) {
+      error = (LIFTLEVEL3 - liftTalon.getSelectedSensorPosition()) * P;
+    } else {
+      error = 0;
+    }
     liftPControl(error, 0.8);
   }
 
