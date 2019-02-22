@@ -1,4 +1,4 @@
-package frc.robot;
+package frc.robot.loggable;
 
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.SPI.Port;

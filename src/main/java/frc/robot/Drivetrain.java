@@ -1,15 +1,11 @@
 package frc.robot;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import frc.robot.loggable.LoggableTalonSRX;
 import frc.robot.logging.DataLogger;
 import frc.robot.logging.Loggable;
-import frc.robot.loggable.LoggableTalonSRX;
 
 /**
  * Drivetrain class for the 2019 robot drivetrain.
@@ -85,6 +81,19 @@ public class Drivetrain implements Loggable {
   public void arcadeDrive(double xDrive, double yDrive) {
     this.driveLeft(yDrive - xDrive);
     this.driveRight(yDrive + xDrive);
+  }
+
+  /**
+   * Drives the robot with an tank style drive
+   *
+   * @param xDrive The speed to drive the left drivetrain (ranges
+   *               from -1.0 to +1.0)
+   * @param yDrive The speed to drive the right drivetrain (ranges
+   *               from -1.0 to +1.0)
+   */
+  public void tankDrive(double leftDrive, double rightDrive) {
+    this.driveLeft(leftDrive);
+    this.driveRight(rightDrive);
   }
 
   /**

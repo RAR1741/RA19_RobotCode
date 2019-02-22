@@ -32,7 +32,9 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.logging.DataLogger;
 import frc.robot.Filesystem;
-import frc.robot.LoggableNavX;
+import frc.robot.loggable.LoggableDoubleSolenoid;
+import frc.robot.loggable.LoggableNavX;
+import frc.robot.loggable.LoggableTalonSRX;
 import frc.vision.MyVisionPipeline;
 
 /**
@@ -54,8 +56,11 @@ public class Robot extends TimedRobot {
   private DigitalInput midLine;
   private DigitalInput rightLine;
   private PressureSensor pressureSensor;
-  private XboxController xbc;
+  private XboxController driver;
+  private XboxController operator;
   private Drivetrain drive;
+  private Manipulation manipulation;
+  private Scoring scoring;
   private DataLogger dataLogger;
   private LoggableNavX navX;
   private UltrasonicSensor ultrasonicSensor;
@@ -91,7 +96,11 @@ public class Robot extends TimedRobot {
     dataLogger.log("lineLeft", leftLine.get());
     dataLogger.log("lineCenter", midLine.get());
     dataLogger.log("lineRight", rightLine.get());
-    dataLogger.logAll();
+    drive.log(dataLogger);
+    manipulation.log(dataLogger);
+    scoring.log(dataLogger);
+    navX.log(dataLogger);
+
     dataLogger.writeLine();
   }
 
@@ -100,9 +109,11 @@ public class Robot extends TimedRobot {
     dataLogger.addAttribute("lineLeft");
     dataLogger.addAttribute("lineCenter");
     dataLogger.addAttribute("lineRight");
-    dataLogger.addLoggable(drive);
-    dataLogger.addLoggable(navX);
-    dataLogger.setupLoggables();
+    drive.setupLogging(dataLogger);
+    manipulation.setupLogging(dataLogger);
+    scoring.setupLogging(dataLogger);
+    navX.setupLogging(dataLogger);
+
     dataLogger.writeAttributes();
   }
 
@@ -128,44 +139,54 @@ public class Robot extends TimedRobot {
       config = new Toml();
     }
 
+    configureLogging();
+
     logger.info("Starting drivetrain...");
     drive = new Drivetrain(4, 5, 6, 7);
     logger.info("Drivetrain started");
 
-    configureLogging();
+    logger.info("Starting manipulation...");
+    manipulation = new Manipulation(new LoggableTalonSRX(12));
+    logger.info("Manipulation started");
 
-    compressor = new Compressor(2);
+    logger.info("Starting scoring...");
+    scoring = new Scoring(new LoggableTalonSRX(9), new LoggableTalonSRX(10), new LoggableDoubleSolenoid(2, 6, 7),
+        new LoggableDoubleSolenoid(2, 4, 5));
+    logger.info("Scoring started");
+
+    compressor = new Compressor(3);
     compressor.start();
 
     pressureSensor = new PressureSensor(new AnalogInput(0));
     ultrasonicSensor = new UltrasonicSensor(new AnalogInput(1));
     navX = new LoggableNavX(Port.kMXP);
 
-    xbc = new XboxController(0);
+    driver = new XboxController(0);
+    operator = new XboxController(1);
 
     leftLine = new DigitalInput(1);
     midLine = new DigitalInput(2);
     rightLine = new DigitalInput(3);
 
     // If we're not in the matrix...
-    if (!RuntimeDetector.isSimulation()) {
-      ledLights = new DoubleSolenoid(1, 4, 5);
-      ledLights.set(DoubleSolenoid.Value.kForward);
+    // if (!RuntimeDetector.isSimulation()) {
+    // ledLights = new DoubleSolenoid(1, 4, 5);
+    // ledLights.set(DoubleSolenoid.Value.kForward);
 
-      camera = CameraServer.getInstance().startAutomaticCapture();
-      camera.setResolution(IMG_WIDTH, IMG_HEIGHT);
+    // camera = CameraServer.getInstance().startAutomaticCapture();
+    // camera.setResolution(IMG_WIDTH, IMG_HEIGHT);
 
-      visionThread = new VisionThread(camera, new MyVisionPipeline(), pipeline -> {
-        if (!pipeline.filterContoursOutput().isEmpty()) {
-          Rect r = Imgproc.boundingRect(pipeline.filterContoursOutput().get(0));
-          synchronized (imgLock) {
-            centerX = r.x + (r.width / 2);
-            System.out.println("Camera: " + centerX);
-          }
-        }
-      });
-      visionThread.start();
-    }
+    // visionThread = new VisionThread(camera, new MyVisionPipeline(), pipeline -> {
+    // if (!pipeline.filterContoursOutput().isEmpty()) {
+    // Rect r = Imgproc.boundingRect(pipeline.filterContoursOutput().get(0));
+    // synchronized (imgLock) {
+    // centerX = r.x + (r.width / 2);
+    // System.out.println("Camera: " + centerX);
+    // }
+    // }
+    // });
+    // visionThread.start();
+    // }
 
     dataLogger = new DataLogger();
     String pathToLogFile = Filesystem.localPath("logs", "log.csv");
@@ -227,7 +248,38 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     // Run teleop code (interpreting input, etc.)
-    drive.arcadeDrive(xbc.getX(GenericHID.Hand.kLeft), xbc.getY(GenericHID.Hand.kLeft));
+    // drive.arcadeDrive(driver.getX(GenericHID.Hand.kLeft),
+    // driver.getY(GenericHID.Hand.kLeft));
+    drive.tankDrive(driver.getY(GenericHID.Hand.kLeft), driver.getY(GenericHID.Hand.kRight));
+    manipulation.lift(operator.getY(Hand.kLeft));
+    scoring.tilt(operator.getY(Hand.kRight));
+
+    switch (operator.getPOV()) {
+    case -1: // None
+      break;
+    case 0: // d-pad up
+      scoring.intakeDown();
+      // scoring.push();
+      break;
+    case 180: // d-pad down
+      scoring.intakeUp();
+      // scoring.retract();
+      break;
+    default:
+      break;
+    }
+
+    if (operator.getAButton()) {
+      scoring.push();
+    } else {
+      scoring.retract();
+    }
+
+    double speedLeft = operator.getTriggerAxis(Hand.kLeft);
+    double speedRight = operator.getTriggerAxis(Hand.kRight);
+
+    double collectionSpeed = speedRight - speedLeft;
+    scoring.roll(collectionSpeed);
     log();
   }
 
