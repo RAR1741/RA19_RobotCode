@@ -1,0 +1,74 @@
+!!com.snobot.simulator.config.v1.SimulatorConfigV1
+mAccelerometers: []
+mAnalogIn:
+- mHandle: 0
+  mName: Analog In 0
+  mType: com.snobot.simulator.module_wrapper.wpi.WpiAnalogInWrapper
+- mHandle: 1
+  mName: Analog In 1
+  mType: com.snobot.simulator.module_wrapper.wpi.WpiAnalogInWrapper
+mAnalogOut: []
+mDefaultI2CWrappers: {}
+mDefaultSpiWrappers: {}
+mDigitalIO:
+- mHandle: 1
+  mName: Digital 1
+  mType: com.snobot.simulator.module_wrapper.wpi.WpiDigitalIoWrapper
+mEncoders: []
+mGyros: []
+mPwm:
+- mHandle: 104
+  mMotorModelConfig:
+    mGearReduction: 10.7142857143
+    mGearboxEfficiency: 0.9
+    mHasBrake: false
+    mInverted: true
+    mMotorType: CIM
+    mNumMotors: 1
+  mMotorSimConfig: !!com.snobot.simulator.motor_sim.StaticLoadMotorSimulationConfig
+    mConversionFactor: 0.16666666666
+    mLoad: 0.6
+  mName: Left Front Drive
+  mType: com.snobot.simulator.simulator_components.ctre.CtreTalonSrxSpeedControllerSim
+- mHandle: 105
+  mMotorModelConfig:
+    mGearReduction: 10.7142857143
+    mGearboxEfficiency: 0.9
+    mHasBrake: false
+    mInverted: true
+    mMotorType: CIM
+    mNumMotors: 1
+  mMotorSimConfig: !!com.snobot.simulator.motor_sim.StaticLoadMotorSimulationConfig
+    mConversionFactor: 0.16666666666
+    mLoad: 0.6
+  mName: Left Back Drive
+  mType: com.snobot.simulator.simulator_components.ctre.CtreTalonSrxSpeedControllerSim
+- mHandle: 106
+  mMotorModelConfig:
+    mGearReduction: 10.7142857143
+    mGearboxEfficiency: 0.9
+    mHasBrake: false
+    mInverted: false
+    mMotorType: CIM
+    mNumMotors: 1
+  mMotorSimConfig: !!com.snobot.simulator.motor_sim.StaticLoadMotorSimulationConfig
+    mConversionFactor: 0.16666666666
+    mLoad: 0.6
+  mName: Right Front Drive
+  mType: com.snobot.simulator.simulator_components.ctre.CtreTalonSrxSpeedControllerSim
+- mHandle: 107
+  mMotorModelConfig:
+    mGearReduction: 10.7142857143
+    mGearboxEfficiency: 0.9
+    mHasBrake: false
+    mInverted: false
+    mMotorType: CIM
+    mNumMotors: 1
+  mMotorSimConfig: !!com.snobot.simulator.motor_sim.StaticLoadMotorSimulationConfig
+    mConversionFactor: 0.16666666666
+    mLoad: 0.6
+  mName: Right Back Drive
+  mType: com.snobot.simulator.simulator_components.ctre.CtreTalonSrxSpeedControllerSim
+mRelays: []
+mSimulatorComponents: []
+mSolenoids: []
