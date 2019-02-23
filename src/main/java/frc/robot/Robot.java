@@ -96,6 +96,7 @@ public class Robot extends TimedRobot {
     dataLogger.log("lineLeft", leftLine.get());
     dataLogger.log("lineCenter", midLine.get());
     dataLogger.log("lineRight", rightLine.get());
+    dataLogger.log("pressure", pressureSensor.getPressure());
     drive.log(dataLogger);
     manipulation.log(dataLogger);
     scoring.log(dataLogger);
@@ -109,6 +110,7 @@ public class Robot extends TimedRobot {
     dataLogger.addAttribute("lineLeft");
     dataLogger.addAttribute("lineCenter");
     dataLogger.addAttribute("lineRight");
+    dataLogger.addAttribute("pressure");
     drive.setupLogging(dataLogger);
     manipulation.setupLogging(dataLogger);
     scoring.setupLogging(dataLogger);
