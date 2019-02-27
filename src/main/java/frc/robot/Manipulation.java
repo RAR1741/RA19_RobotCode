@@ -5,6 +5,7 @@ import frc.robot.logging.DataLogger;
 import frc.robot.logging.Loggable;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.moandjiezana.toml.Toml;
 
 public class Manipulation implements Loggable {
   private LoggableTalonSRX liftTalon;
@@ -37,32 +38,23 @@ public class Manipulation implements Loggable {
   }
 
   /**
-   * Uses P control to move the lift.
+   * Re-configure the manipulation system based on TOML config.
    *
-   * @param error error from the target
-   * @param maxMotorPercent maximum motor percent
+   * @param config the parsed TOML configuration file
    */
-  public void liftPControl(double error, double maxMotorPercent) {
-    double motorPower = maxMotorPercent * error;
-    liftTalon.set(motorPower);
+  void configure(Toml config) {
   }
 
   /**
-   * Lifts lift to a level.
-   *
-   * @param level what level it lifts to (1, 2, or 3)
+   * Set target position.
    */
-  public void liftLevel(int level) {
-    if (level == 1){
-      error = (LIFTLEVEL1 - liftTalon.getSelectedSensorPosition()) * P;
-    } else if (level == 2) {
-      error = (LIFTLEVEL2 - liftTalon.getSelectedSensorPosition()) * P;
-    } else if (level == 3) {
-      error = (LIFTLEVEL3 - liftTalon.getSelectedSensorPosition()) * P;
-    } else {
-      error = 0;
-    }
-    liftPControl(error, 0.8);
+  public void setSetpoint(int targetPosition) {
+  }
+
+  /**
+   * Whether or not we've reached the target position.
+   */
+  public boolean onTarget() {
   }
 
   public void setupLogging(DataLogger dl) {
