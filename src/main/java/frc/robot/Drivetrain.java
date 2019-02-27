@@ -32,6 +32,8 @@ public class Drivetrain implements Loggable {
   private DigitalInput midLine;
   private DigitalInput rightLine;
 
+  private double P;
+
   /**
    * Constructor
    *
@@ -139,7 +141,7 @@ public class Drivetrain implements Loggable {
    *                          straight, -1 = turning)
    */
   public void drivePControl(double error, double maxMotorPercent, int isDrivingStraight) {
-    double motorPower = maxMotorPercent * error;
+    double motorPower = maxMotorPercent * error * P;
     driveLeft(motorPower);
     driveRight(motorPower * isDrivingStraight);
   }

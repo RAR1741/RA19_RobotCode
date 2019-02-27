@@ -16,9 +16,12 @@ public class AutoLineup {
   private double P; // Needes to be tuned
   private double error;
   private double directDistance;
+  private double turnDegree;
+  private double pathDistance;
 
   public enum AutoLineupState {
     LINING_UP,
+    TAKE_TARGET_VALUES,
     LINING_UP_2,
     DRIVING,
     TURNING,
@@ -56,31 +59,52 @@ public class AutoLineup {
 
   public void run() {
     switch(state) {
+      /**
+       * Lines the robot up with the target for sensor reading.
+       */
       case LINING_UP:
         error = getCameraDegree(centerX) * P;
         drive.drivePControl(error, 0.8, -1);
         if (error >= -1 || error <= 1){
-          directDistance = getDistance();
-          state = AutoLineupState.LINING_UP_2;
+          state = AutoLineupState.TAKE_TARGET_VALUES;
         }
         break;
 
+      /**
+       * Takes sensor readings and calculated target values for later movements.
+       */
+      case TAKE_TARGET_VALUES:
+        directDistance = getDistance();
+        turnDegree = getTurnDegree(directDistance);
+        pathDistance = getPathDistance(directDistance);
+        state = AutoLineupState.LINING_UP_2;
+        break;
+
+      /**
+       * Lines up robot with new path.
+      */
       case LINING_UP_2:
-        error = (getTurnDegree(centerX, directDistance) - navx.getYaw()) * P;
+        error = (turnDegree - navx.getYaw()) * P;
         drive.drivePControl(error, 0.8, -1);
         if (error >= -1 || error  <= 1){
           state = AutoLineupState.DRIVING;
         }
         break;
 
+      /**
+       * Drives robot distance of designated path.
+       */
       case DRIVING:
-        error = (getPathDistance(centerX, directDistance) - directDistance) * P;
+        error = (pathDistance - directDistance) * P;
         drive.drivePControl(error, 0.8, 1);
         if (error >= -1 || error <= 1){
           state = AutoLineupState.TURNING;
         }
         break;
 
+      /**
+       * Turns robot to face the target.
+       */
       case TURNING:
         error = (90 - navx.getYaw()) * P;
         drive.drivePControl(error, 0.8, -1);
@@ -89,6 +113,9 @@ public class AutoLineup {
         }
         break;
 
+      /**
+       * Follows line.
+       */
       case LINE:
         drive.followLine(0.5);
         if (getDistance() <= 31) {
@@ -96,11 +123,17 @@ public class AutoLineup {
         }
         break;
 
+      /**
+       * Ends state machine.
+       */
       case IDLE:
         break;
     }
   }
 
+  /**
+   * Uses two ultrasonic sensors to determine average distance.
+   */
   private double getDistance() {
     return (sensorL.getDistance() + sensorR.getDistance()) / 2;
   }
@@ -118,7 +151,6 @@ public class AutoLineup {
   /**
    * Gets the degrees from the center of the camera's vision.
    *
-   * @param turn the number of pixels from the center of the camera
    * @param centerX the center of the vision target
    * @return the number of degrees from the center of the camera's vision
    */
@@ -130,13 +162,11 @@ public class AutoLineup {
   /**
    * Gets the length in centimeters of the path to a point TARGET_DISTANCE away from the target.\
    *
-   * @param centerX the center of the vision target
    * @param directDistance the number of centimeters from the robot to the target
    */
-  public double getPathDistance(double centerX, double directDistance) {
-    double turn = centerX - (IMG_WIDTH/2);
-    double cameraDegree = turn/(IMG_WIDTH/CAM_FOV);
-    double a = Math.cos(cameraDegree)*directDistance;
+  public double getPathDistance(double directDistance) {
+    double gyro = navx.getYaw();
+    double a = Math.cos(gyro)*directDistance;
     double b = Math.sqrt(Math.pow(directDistance,2) - Math.pow(a,2));
     return Math.sqrt(Math.pow(a,2) + Math.pow((b - TARGET_DISTANCE),2));
   }
@@ -148,10 +178,9 @@ public class AutoLineup {
    * @param directDistance the number of centimeters from the robot to the target
    * @return the global degrees the robot must turn to in order to line up with the path
    */
-  public double getTurnDegree(double centerX, double directDistance){
-    double turn = centerX - (IMG_WIDTH/2);
-    double cameraDegree = turn/(IMG_WIDTH/CAM_FOV);
-    double a = Math.cos(cameraDegree)*directDistance;
+  public double getTurnDegree(double directDistance){
+    double gyro = navx.getYaw();
+    double a = Math.cos(gyro)*directDistance;
     double b = Math.sqrt(Math.pow(directDistance,2) - Math.pow(a,2));
     double pathDistance = Math.sqrt(Math.pow(a,2) + Math.pow((b - TARGET_DISTANCE),2));
     return Math.acos(a/pathDistance);
