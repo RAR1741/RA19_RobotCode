@@ -6,3 +6,12 @@ level = "INFO"
 
 [manipulation]
 P = 1 # Not final value
+I = 0
+D = 0
+
+tolerance = 10 # +/- encoder ticks from target for considering us "on target"
+
+positions = [
+  0, # Home
+  100
+]
