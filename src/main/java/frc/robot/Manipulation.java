@@ -5,18 +5,14 @@ import frc.robot.logging.DataLogger;
 import frc.robot.logging.Loggable;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
+import com.ctre.phoenix.motorcontrol.can.TalonSRXPIDSetConfiguration;
 import com.moandjiezana.toml.Toml;
 
 public class Manipulation implements Loggable {
   private LoggableTalonSRX liftTalon;
 
-  //Lift positions need to be determined
-  private final float LIFTLEVEL1 = 0;
-  private final float LIFTLEVEL2 = 0;
-  private final float LIFTLEVEL3 = 0;
-
-  private double P;
-  private double error;
+  private int tolerance;
 
   /**
    * Constructor
@@ -26,6 +22,7 @@ public class Manipulation implements Loggable {
   Manipulation(LoggableTalonSRX liftCan) {
     liftTalon = liftCan;
     liftTalon.setName("Lift");
+    tolerance = 10;
   }
 
   /**
@@ -43,18 +40,28 @@ public class Manipulation implements Loggable {
    * @param config the parsed TOML configuration file
    */
   void configure(Toml config) {
+    TalonSRXConfiguration talonConfig = new TalonSRXConfiguration();
+    talonConfig.slot0.kP = config.getDouble("manipulation.P", 1.0); // TODO: Come back after tuning values to change "1"
+    talonConfig.slot0.kI = config.getDouble("manipulation.I", 0.0);
+    talonConfig.slot0.kD = config.getDouble("manipulation.D", 0.0);
+    liftTalon.configAllSettings(talonConfig);
+    tolerance = config.getLong("manipulation.tolerance", 10l).intValue();
   }
 
   /**
    * Set target position.
+   *
+   * @param targetPosition wanted position
    */
   public void setSetpoint(int targetPosition) {
+    liftTalon.set(ControlMode.Position, targetPosition);
   }
 
   /**
    * Whether or not we've reached the target position.
    */
   public boolean onTarget() {
+    return Math.abs(liftTalon.getClosedLoopError()) <= this.tolerance;
   }
 
   public void setupLogging(DataLogger dl) {
