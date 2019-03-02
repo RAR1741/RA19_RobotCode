@@ -6,4 +6,4 @@ level = "INFO"
 
 [input]
 # Maximum turn speed (in joystick coordinates)
-maxTurn = 0.8
+maxTurn = 0.6
