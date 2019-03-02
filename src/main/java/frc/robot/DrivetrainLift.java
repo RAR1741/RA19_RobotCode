@@ -4,43 +4,37 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import frc.robot.loggable.LoggableDoubleSolenoid;
+import frc.robot.loggable.LoggableTalonSRX;
+import frc.robot.logging.DataLogger;
+import frc.robot.logging.Loggable;
 
-public class DrivetrainLift {
+public class DrivetrainLift implements Loggable {
 
-  private DoubleSolenoid frontLiftL;
-  private DoubleSolenoid frontLiftR;
-  private DoubleSolenoid backLiftL;
-  private DoubleSolenoid backLiftR;
+  private LoggableDoubleSolenoid frontLiftL;
+  private LoggableDoubleSolenoid frontLiftR;
+  private LoggableDoubleSolenoid backLiftL;
+  private LoggableDoubleSolenoid backLiftR;
 
-  private WPI_TalonSRX rollerTalon;
+  private LoggableTalonSRX rollerTalon;
 
   /**
    * Constructor
    *
-   * @param rollerCanId The CAN id of the talon for the roller motor
+   * @param rollerTalon The talon used for rolling forward
    *
-   * @param frontLiftLCanId The CAN id of the pcm for the front left lift
-   * @param frontLiftLChannel1 The channel number of the forward channel for the front left lift
-   * @param frontLiftLChannel2 The channel number of the reverse channel for the front left lift
-   *
-   * @param frontLiftRCanId The CAN id of the pcm for the front right lift
-   * @param frontLiftRChannel1 The channel number of the forward channel for the front right lift
-   * @param frontLiftRChannel2 The channel number of the reverse channel for the front right lift
-   *
-   * @param backLiftLCanId The CAN id of the pcm for the back left lift
-   * @param backLiftLChannel1 The channel number of the forward channel for the back left lift
-   * @param backLiftLChannel2 The channel number of the reverse channel for the back left lift
-   *
-   * @param backLiftRCanId The CAN id of the pcm for the back right lift
-   * @param backLiftRChannel1 The channel number of the forward channel for the back right lift
-   * @param backLiftRChannel2 The channel number of the reverse channel for the back right lift
+   * @param frontLiftL  The front left solenoid
+   * @param frontLiftR  The front right solenoid
+   * @param backLiftL   The rear left solenoid
+   * @param backLiftR   The rear right solenoid
    */
-  DrivetrainLift(int rollerCanId, int frontLiftLCanId, int frontLiftLChannel1, int frontLiftLChannel2, int frontLiftRCanId, int frontLiftRChannel1, int frontLiftRChannel2, int backLiftLCanId, int backLiftLChannel1, int backLiftLChannel2, int backLiftRCanId, int backLiftRChannel1, int backLiftRChannel2) {
-    rollerTalon = new WPI_TalonSRX(rollerCanId);
-    frontLiftL = new DoubleSolenoid(frontLiftLCanId, frontLiftLChannel1, frontLiftLChannel2);
-    frontLiftR = new DoubleSolenoid(frontLiftRCanId, frontLiftRChannel1, frontLiftRChannel2);
-    backLiftL = new DoubleSolenoid(backLiftLCanId, backLiftLChannel1, backLiftLChannel2);
-    backLiftR = new DoubleSolenoid(backLiftRCanId, backLiftRChannel1, backLiftRChannel2);
+  DrivetrainLift(LoggableTalonSRX rollerTalon, LoggableDoubleSolenoid frontLiftL, LoggableDoubleSolenoid frontLiftR,
+      LoggableDoubleSolenoid backLiftL, LoggableDoubleSolenoid backLiftR) {
+    this.rollerTalon = rollerTalon;
+    this.frontLiftL = frontLiftL;
+    this.frontLiftR = frontLiftR;
+    this.backLiftL = backLiftL;
+    this.backLiftR = backLiftR;
   }
 
   /**
@@ -82,5 +76,31 @@ public class DrivetrainLift {
    */
   public void driveRoll(double speed) {
     rollerTalon.set(ControlMode.PercentOutput, speed);
+  }
+
+  /**
+   * Setup logging with a data logger.
+   *
+   * @param logger the data logger
+   */
+  public void setupLogging(DataLogger logger) {
+    rollerTalon.setupLogging(logger);
+    frontLiftL.setupLogging(logger);
+    frontLiftR.setupLogging(logger);
+    backLiftL.setupLogging(logger);
+    backLiftR.setupLogging(logger);
+  }
+
+  /**
+   * Log the state of the drivetrain lift to the supplied data logger.
+   *
+   * @param logger the data logger
+   */
+  public void log(DataLogger logger) {
+    rollerTalon.log(logger);
+    frontLiftL.log(logger);
+    frontLiftR.log(logger);
+    backLiftL.log(logger);
+    backLiftR.log(logger);
   }
 }
