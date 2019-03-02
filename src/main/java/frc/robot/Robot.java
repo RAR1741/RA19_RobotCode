@@ -10,6 +10,8 @@ import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,7 +26,6 @@ import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.SPI.Port;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -65,7 +66,9 @@ public class Robot extends TimedRobot {
   private LoggableNavX navX;
   private UltrasonicSensor ultrasonicSensor;
   private DoubleSolenoid ledLights;
+  private InputTransformer inputTransformer;
   private Timer timer;
+  private List<Configurable> configurables;
 
   private VisionThread visionThread;
   private double centerX = 0.0;
@@ -130,14 +133,8 @@ public class Robot extends TimedRobot {
     timer.start();
     logger.info("Timer started");
 
-    try {
-      String pathToTomlFile = Filesystem.localDeployPath("robot.toml");
-      logger.info(String.format("Loading log file from \"%s\"", pathToTomlFile));
-      config = new Toml().read(new File(pathToTomlFile));
-    } catch (Exception ex) {
-      logger.severe(String.format("Couldn't load from file (falling back to empty): %s", ex.getMessage()));
-      config = new Toml();
-    }
+    configurables = new LinkedList<Configurable>();
+    readConfiguration();
 
     configureLogging();
 
@@ -153,6 +150,8 @@ public class Robot extends TimedRobot {
     scoring = new Scoring(new LoggableTalonSRX(9), new LoggableTalonSRX(10), new LoggableDoubleSolenoid(2, 6, 7),
         new LoggableDoubleSolenoid(2, 4, 5));
     logger.info("Scoring started");
+
+    inputTransformer = new InputTransformer();
 
     compressor = new Compressor(3);
     compressor.start();
@@ -192,8 +191,26 @@ public class Robot extends TimedRobot {
     String pathToLogFile = Filesystem.localPath("logs", "log.csv");
     dataLogger.open(pathToLogFile);
     setupDataLogging();
+    reloadConfiguration();
 
     logger.info("Robot initialized.");
+  }
+
+  public void readConfiguration() {
+    try {
+      String pathToTomlFile = Filesystem.localDeployPath("robot.toml");
+      logger.info(String.format("Loading log file from \"%s\"", pathToTomlFile));
+      config = new Toml().read(new File(pathToTomlFile));
+    } catch (Exception ex) {
+      logger.severe(String.format("Couldn't load from file (falling back to empty): %s", ex.getMessage()));
+      config = new Toml();
+    }
+  }
+
+  public void reloadConfiguration() {
+    for (Configurable configurable : configurables) {
+      configurable.configure(this.config);
+    }
   }
 
   /**
@@ -225,6 +242,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     logger.info("Entering autonomous mode.");
+    reloadConfiguration();
     startDataLogging("auto");
   }
 
@@ -239,6 +257,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    reloadConfiguration();
     startDataLogging("teleop");
   }
 
@@ -250,7 +269,12 @@ public class Robot extends TimedRobot {
     // Run teleop code (interpreting input, etc.)
     // drive.arcadeDrive(driver.getX(GenericHID.Hand.kLeft),
     // driver.getY(GenericHID.Hand.kLeft));
-    drive.tankDrive(driver.getY(GenericHID.Hand.kLeft), driver.getY(GenericHID.Hand.kRight));
+
+    double turnInput = driver.getX(Hand.kRight);
+    if (driver.getTriggerAxis(Hand.kRight) > 0.5) {
+      turnInput = inputTransformer.transformTurn(turnInput);
+    }
+    drive.arcadeDrive(turnInput, driver.getY(Hand.kLeft));
     manipulation.lift(operator.getY(Hand.kLeft));
     scoring.tilt(operator.getY(Hand.kRight));
 
