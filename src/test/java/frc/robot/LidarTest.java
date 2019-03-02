@@ -25,23 +25,22 @@ public class LidarTest {
 
     // Simulate a few cycles without the status register showing "ready"
     // before returning 0.
-    when(fakeI2C.read(eq(0x01), eq(1), any(ByteBuffer.class)))
-      .thenAnswer(parrotRead(waiting, false))
-      .thenAnswer(parrotRead(waiting, false))
-      .thenAnswer(parrotRead(done, false));
+    when(fakeI2C.read(eq(0x01), eq(1), any(ByteBuffer.class))).thenAnswer(parrotRead(waiting, false))
+        .thenAnswer(parrotRead(waiting, false)).thenAnswer(parrotRead(done, false));
 
     // Finally provide the result.
-    when(fakeI2C.read(eq(0x8f), eq(2), any(ByteBuffer.class)))
-      .thenAnswer(parrotRead(result, false));
+    when(fakeI2C.read(eq(0x8f), eq(2), any(ByteBuffer.class))).thenAnswer(parrotRead(result, false));
 
     Lidar lidar = new Lidar(fakeI2C);
     assertEquals(259, lidar.getDistanceInCentimeters());
   }
 
   /**
-   * Shorthand to return a canned response from the I2C response to a read request.
+   * Shorthand to return a canned response from the I2C response to a read
+   * request.
+   *
    * @param toBeRead byte array containing the response.
-   * @param retval whether or not to indicate the transaction was aborted
+   * @param retval   whether or not to indicate the transaction was aborted
    * @return a Mockito Answer to provide a stubbed response
    */
   private static Answer<Boolean> parrotRead(byte[] toBeRead, boolean retval) {
@@ -49,7 +48,7 @@ public class LidarTest {
       public Boolean answer(InvocationOnMock invocation) {
         // This modifies the underlying array of the buffer handed to us,
         // just like the real I2C class will.
-        byte[] backer = ((ByteBuffer)invocation.getArgument(2)).array();
+        byte[] backer = ((ByteBuffer) invocation.getArgument(2)).array();
 
         for (int i = 0; i < toBeRead.length; ++i) {
           backer[i] = toBeRead[i];

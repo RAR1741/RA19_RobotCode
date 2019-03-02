@@ -15,6 +15,7 @@ public class PressureSensor {
 
   /**
    * Get current pressure in PSI.
+   *
    * @return double pressure in PSI.
    */
   public double getPressure() {

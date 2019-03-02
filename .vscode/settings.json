@@ -14,5 +14,8 @@
   "editor.insertSpaces": true,
   "editor.tabSize": 2,
   "editor.detectIndentation": false,
-  "files.trimTrailingWhitespace": true
+  "files.trimTrailingWhitespace": true,
+  "[java]": {
+    "editor.formatOnSave": true
+  }
 }
