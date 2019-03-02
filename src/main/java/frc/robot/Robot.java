@@ -248,9 +248,15 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     // Run teleop code (interpreting input, etc.)
-    // drive.arcadeDrive(driver.getX(GenericHID.Hand.kLeft),
-    // driver.getY(GenericHID.Hand.kLeft));
-    drive.tankDrive(driver.getY(GenericHID.Hand.kLeft), driver.getY(GenericHID.Hand.kRight));
+
+    if (driver.getBumper(GenericHID.Hand.kRight)) {
+      drive.arcadeDrive(driver.getX(GenericHID.Hand.kRight), -driver.getY(GenericHID.Hand.kLeft));
+    } else {
+      drive.arcadeDrive(driver.getX(GenericHID.Hand.kRight), driver.getY(GenericHID.Hand.kLeft));
+    }
+
+    // drive.tankDrive(driver.getY(GenericHID.Hand.kLeft),
+    // driver.getY(GenericHID.Hand.kRight));
     manipulation.lift(operator.getY(Hand.kLeft));
     scoring.tilt(operator.getY(Hand.kRight));
 
