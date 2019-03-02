@@ -36,6 +36,7 @@ import frc.robot.Filesystem;
 import frc.robot.loggable.LoggableDoubleSolenoid;
 import frc.robot.loggable.LoggableNavX;
 import frc.robot.loggable.LoggableTalonSRX;
+import frc.robot.loggable.LoggableXboxController;
 import frc.vision.MyVisionPipeline;
 
 /**
@@ -57,8 +58,8 @@ public class Robot extends TimedRobot {
   private DigitalInput midLine;
   private DigitalInput rightLine;
   private PressureSensor pressureSensor;
-  private XboxController driver;
-  private XboxController operator;
+  private LoggableXboxController driver;
+  private LoggableXboxController operator;
   private Drivetrain drive;
   private Manipulation manipulation;
   private Scoring scoring;
@@ -99,6 +100,8 @@ public class Robot extends TimedRobot {
     dataLogger.log("lineLeft", leftLine.get());
     dataLogger.log("lineCenter", midLine.get());
     dataLogger.log("lineRight", rightLine.get());
+    driver.log(dataLogger);
+    operator.log(dataLogger);
     drive.log(dataLogger);
     manipulation.log(dataLogger);
     scoring.log(dataLogger);
@@ -112,6 +115,8 @@ public class Robot extends TimedRobot {
     dataLogger.addAttribute("lineLeft");
     dataLogger.addAttribute("lineCenter");
     dataLogger.addAttribute("lineRight");
+    driver.setupLogging(dataLogger);
+    operator.setupLogging(dataLogger);
     drive.setupLogging(dataLogger);
     manipulation.setupLogging(dataLogger);
     scoring.setupLogging(dataLogger);
@@ -160,8 +165,10 @@ public class Robot extends TimedRobot {
     ultrasonicSensor = new UltrasonicSensor(new AnalogInput(1));
     navX = new LoggableNavX(Port.kMXP);
 
-    driver = new XboxController(0);
-    operator = new XboxController(1);
+    driver = new LoggableXboxController(0);
+    driver.setName("driver");
+    operator = new LoggableXboxController(1);
+    operator.setName("operator");
 
     leftLine = new DigitalInput(1);
     midLine = new DigitalInput(2);
