@@ -61,6 +61,7 @@ public class Robot extends TimedRobot {
   private Drivetrain drive;
   private Manipulation manipulation;
   private Scoring scoring;
+  private DrivetrainLift climber;
   private DataLogger dataLogger;
   private LoggableNavX navX;
   private UltrasonicSensor ultrasonicSensor;
@@ -99,6 +100,7 @@ public class Robot extends TimedRobot {
     drive.log(dataLogger);
     manipulation.log(dataLogger);
     scoring.log(dataLogger);
+    climber.log(dataLogger);
     navX.log(dataLogger);
 
     dataLogger.writeLine();
@@ -112,6 +114,7 @@ public class Robot extends TimedRobot {
     drive.setupLogging(dataLogger);
     manipulation.setupLogging(dataLogger);
     scoring.setupLogging(dataLogger);
+    climber.log(dataLogger);
     navX.setupLogging(dataLogger);
 
     dataLogger.writeAttributes();
@@ -153,6 +156,12 @@ public class Robot extends TimedRobot {
     scoring = new Scoring(new LoggableTalonSRX(9), new LoggableTalonSRX(10), new LoggableDoubleSolenoid(2, 6, 7),
         new LoggableDoubleSolenoid(2, 4, 5));
     logger.info("Scoring started");
+
+    logger.info("Starting climber...");
+    climber = new DrivetrainLift(new LoggableTalonSRX(13), // roller
+        new LoggableDoubleSolenoid(2, 1, 2), new LoggableDoubleSolenoid(2, 3, 4), new LoggableDoubleSolenoid(3, 1, 2),
+        new LoggableDoubleSolenoid(3, 3, 4));
+    logger.info("Climber started.");
 
     compressor = new Compressor(3);
     compressor.start();
@@ -280,6 +289,9 @@ public class Robot extends TimedRobot {
 
     double collectionSpeed = speedRight - speedLeft;
     scoring.roll(collectionSpeed);
+
+    // TODO: Add control for climber here (need to be careful about accidental
+    // deployment)
     log();
   }
 
