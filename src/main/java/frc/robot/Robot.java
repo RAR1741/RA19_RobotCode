@@ -276,8 +276,9 @@ public class Robot extends TimedRobot {
     // Run teleop code (interpreting input, etc.)
     double turnInput = driver.getX(Hand.kRight);
     double speedInput = driver.getY(Hand.kLeft);
-    if (driver.getTriggerAxis(Hand.kRight) > 0.5) {
-      turnInput = inputTransformer.transformTurn(turnInput);
+    if (driver.getTriggerAxis(Hand.kRight) < 0.5) {
+      turnInput = inputTransformer.transformDrive(turnInput);
+      speedInput = inputTransformer.transformDrive(speedInput);
     }
     if (driver.getBumper(GenericHID.Hand.kRight)) {
       speedInput = -speedInput;

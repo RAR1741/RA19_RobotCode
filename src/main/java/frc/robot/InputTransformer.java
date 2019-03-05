@@ -13,7 +13,7 @@ public class InputTransformer implements Configurable {
     maxTurn = config.getDouble("input.maxTurn", 1.0);
   }
 
-  double transformTurn(double input) {
+  double transformDrive(double input) {
     return input * maxTurn;
   }
 }
