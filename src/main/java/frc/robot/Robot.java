@@ -175,24 +175,24 @@ public class Robot extends TimedRobot {
     rightLine = new DigitalInput(3);
 
     // If we're not in the matrix...
-    // if (!RuntimeDetector.isSimulation()) {
-    // ledLights = new DoubleSolenoid(1, 4, 5);
-    // ledLights.set(DoubleSolenoid.Value.kForward);
+    if (!RuntimeDetector.isSimulation()) {
+      // ledLights = new DoubleSolenoid(1, 4, 5);
+      // ledLights.set(DoubleSolenoid.Value.kForward);
 
-    // camera = CameraServer.getInstance().startAutomaticCapture();
-    // camera.setResolution(IMG_WIDTH, IMG_HEIGHT);
+      camera = CameraServer.getInstance().startAutomaticCapture();
+      camera.setResolution(IMG_WIDTH, IMG_HEIGHT);
 
-    // visionThread = new VisionThread(camera, new MyVisionPipeline(), pipeline -> {
-    // if (!pipeline.filterContoursOutput().isEmpty()) {
-    // Rect r = Imgproc.boundingRect(pipeline.filterContoursOutput().get(0));
-    // synchronized (imgLock) {
-    // centerX = r.x + (r.width / 2);
-    // System.out.println("Camera: " + centerX);
-    // }
-    // }
-    // });
-    // visionThread.start();
-    // }
+      // visionThread = new VisionThread(camera, new MyVisionPipeline(), pipeline -> {
+      // if (!pipeline.filterContoursOutput().isEmpty()) {
+      // Rect r = Imgproc.boundingRect(pipeline.filterContoursOutput().get(0));
+      // synchronized (imgLock) {
+      // centerX = r.x + (r.width / 2);
+      // System.out.println("Camera: " + centerX);
+      // }
+      // }
+      // });
+      // visionThread.start();
+    }
 
     dataLogger = new DataLogger();
     String pathToLogFile = Filesystem.localPath("logs", "log.csv");
