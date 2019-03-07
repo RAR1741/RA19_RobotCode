@@ -287,18 +287,35 @@ public class Robot extends TimedRobot {
     double turnInput = driver.getX(Hand.kRight);
     double speedInput = driver.getY(Hand.kLeft);
 
-    // TODO: Add control for climber here (need to be careful about accidental
-    // deployment)
+    // If we're in climb mode (either button is pressed)
+    if (driver.getBButton() || driver.getYButton()) {
+      // Don't allow the main drivetrain to move.
+      drive.arcadeDrive(0, 0);
+      // Instead control secondary drive
+      climber.driveRoll(speedInput);
 
-    if (driver.getTriggerAxis(Hand.kRight) < 0.5) {
-      turnInput = inputTransformer.transformDrive(turnInput);
-      speedInput = inputTransformer.transformDrive(speedInput);
-    }
-    if (driver.getBumper(GenericHID.Hand.kRight)) {
-      speedInput = -speedInput;
-    }
+      if (driver.getBButton()) {
+        climber.backLiftOut();
+      } else {
+        climber.backLiftIn();
+      }
 
-    drive.arcadeDrive(turnInput, speedInput);
+      if (driver.getYButton()) {
+        climber.frontLiftOut();
+      } else {
+        climber.frontLiftIn();
+      }
+    } else {
+      if (driver.getTriggerAxis(Hand.kRight) < 0.5) {
+        turnInput = inputTransformer.transformDrive(turnInput);
+        speedInput = inputTransformer.transformDrive(speedInput);
+      }
+      if (driver.getBumper(GenericHID.Hand.kRight)) {
+        speedInput = -speedInput;
+      }
+
+      drive.arcadeDrive(turnInput, speedInput);
+    }
 
     manipulation.lift(operator.getY(Hand.kLeft));
     scoring.tilt(operator.getY(Hand.kRight));
