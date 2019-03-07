@@ -10,6 +10,8 @@ import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,7 +26,6 @@ import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.SPI.Port;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -35,6 +36,7 @@ import frc.robot.Filesystem;
 import frc.robot.loggable.LoggableDoubleSolenoid;
 import frc.robot.loggable.LoggableNavX;
 import frc.robot.loggable.LoggableTalonSRX;
+import frc.robot.loggable.LoggableXboxController;
 import frc.vision.MyVisionPipeline;
 
 /**
@@ -56,8 +58,8 @@ public class Robot extends TimedRobot {
   private DigitalInput midLine;
   private DigitalInput rightLine;
   private PressureSensor pressureSensor;
-  private XboxController driver;
-  private XboxController operator;
+  private LoggableXboxController driver;
+  private LoggableXboxController operator;
   private Drivetrain drive;
   private Manipulation manipulation;
   private Scoring scoring;
@@ -66,7 +68,9 @@ public class Robot extends TimedRobot {
   private LoggableNavX navX;
   private UltrasonicSensor ultrasonicSensor;
   private DoubleSolenoid ledLights;
+  private InputTransformer inputTransformer;
   private Timer timer;
+  private List<Configurable> configurables;
 
   private VisionThread visionThread;
   private double centerX = 0.0;
@@ -97,6 +101,8 @@ public class Robot extends TimedRobot {
     dataLogger.log("lineLeft", leftLine.get());
     dataLogger.log("lineCenter", midLine.get());
     dataLogger.log("lineRight", rightLine.get());
+    driver.log(dataLogger);
+    operator.log(dataLogger);
     drive.log(dataLogger);
     manipulation.log(dataLogger);
     scoring.log(dataLogger);
@@ -111,6 +117,8 @@ public class Robot extends TimedRobot {
     dataLogger.addAttribute("lineLeft");
     dataLogger.addAttribute("lineCenter");
     dataLogger.addAttribute("lineRight");
+    driver.setupLogging(dataLogger);
+    operator.setupLogging(dataLogger);
     drive.setupLogging(dataLogger);
     manipulation.setupLogging(dataLogger);
     scoring.setupLogging(dataLogger);
@@ -133,14 +141,8 @@ public class Robot extends TimedRobot {
     timer.start();
     logger.info("Timer started");
 
-    try {
-      String pathToTomlFile = Filesystem.localDeployPath("robot.toml");
-      logger.info(String.format("Loading log file from \"%s\"", pathToTomlFile));
-      config = new Toml().read(new File(pathToTomlFile));
-    } catch (Exception ex) {
-      logger.severe(String.format("Couldn't load from file (falling back to empty): %s", ex.getMessage()));
-      config = new Toml();
-    }
+    configurables = new LinkedList<Configurable>();
+    readConfiguration();
 
     configureLogging();
 
@@ -163,6 +165,8 @@ public class Robot extends TimedRobot {
         new LoggableDoubleSolenoid(3, 3, 4));
     logger.info("Climber started.");
 
+    inputTransformer = new InputTransformer();
+
     compressor = new Compressor(3);
     compressor.start();
 
@@ -170,39 +174,59 @@ public class Robot extends TimedRobot {
     ultrasonicSensor = new UltrasonicSensor(new AnalogInput(1));
     navX = new LoggableNavX(Port.kMXP);
 
-    driver = new XboxController(0);
-    operator = new XboxController(1);
+    driver = new LoggableXboxController(0);
+    driver.setName("driver");
+    operator = new LoggableXboxController(1);
+    operator.setName("operator");
 
     leftLine = new DigitalInput(1);
     midLine = new DigitalInput(2);
     rightLine = new DigitalInput(3);
 
     // If we're not in the matrix...
-    // if (!RuntimeDetector.isSimulation()) {
-    // ledLights = new DoubleSolenoid(1, 4, 5);
-    // ledLights.set(DoubleSolenoid.Value.kForward);
+    if (!RuntimeDetector.isSimulation()) {
+      // ledLights = new DoubleSolenoid(1, 4, 5);
+      // ledLights.set(DoubleSolenoid.Value.kForward);
 
-    // camera = CameraServer.getInstance().startAutomaticCapture();
-    // camera.setResolution(IMG_WIDTH, IMG_HEIGHT);
+      camera = CameraServer.getInstance().startAutomaticCapture();
+      camera.setResolution(IMG_WIDTH, IMG_HEIGHT);
 
-    // visionThread = new VisionThread(camera, new MyVisionPipeline(), pipeline -> {
-    // if (!pipeline.filterContoursOutput().isEmpty()) {
-    // Rect r = Imgproc.boundingRect(pipeline.filterContoursOutput().get(0));
-    // synchronized (imgLock) {
-    // centerX = r.x + (r.width / 2);
-    // System.out.println("Camera: " + centerX);
-    // }
-    // }
-    // });
-    // visionThread.start();
-    // }
+      // visionThread = new VisionThread(camera, new MyVisionPipeline(), pipeline -> {
+      // if (!pipeline.filterContoursOutput().isEmpty()) {
+      // Rect r = Imgproc.boundingRect(pipeline.filterContoursOutput().get(0));
+      // synchronized (imgLock) {
+      // centerX = r.x + (r.width / 2);
+      // System.out.println("Camera: " + centerX);
+      // }
+      // }
+      // });
+      // visionThread.start();
+    }
 
     dataLogger = new DataLogger();
     String pathToLogFile = Filesystem.localPath("logs", "log.csv");
     dataLogger.open(pathToLogFile);
     setupDataLogging();
+    reloadConfiguration();
 
     logger.info("Robot initialized.");
+  }
+
+  public void readConfiguration() {
+    try {
+      String pathToTomlFile = Filesystem.localDeployPath("robot.toml");
+      logger.info(String.format("Loading log file from \"%s\"", pathToTomlFile));
+      config = new Toml().read(new File(pathToTomlFile));
+    } catch (Exception ex) {
+      logger.severe(String.format("Couldn't load from file (falling back to empty): %s", ex.getMessage()));
+      config = new Toml();
+    }
+  }
+
+  public void reloadConfiguration() {
+    for (Configurable configurable : configurables) {
+      configurable.configure(this.config);
+    }
   }
 
   /**
@@ -234,6 +258,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     logger.info("Entering autonomous mode.");
+    reloadConfiguration();
     startDataLogging("auto");
   }
 
@@ -243,23 +268,38 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     // Run autonomous code (state machines, etc.)
+    humanControl();
     log();
   }
 
   @Override
   public void teleopInit() {
+    reloadConfiguration();
     startDataLogging("teleop");
   }
 
   /**
-   * This function is called periodically during operator control.
+   * Factor out all human controls into a common function so we can drive during
+   * the sandstorm period.
    */
-  @Override
-  public void teleopPeriodic() {
+  private void humanControl() {
     // Run teleop code (interpreting input, etc.)
-    // drive.arcadeDrive(driver.getX(GenericHID.Hand.kLeft),
-    // driver.getY(GenericHID.Hand.kLeft));
-    drive.tankDrive(driver.getY(GenericHID.Hand.kLeft), driver.getY(GenericHID.Hand.kRight));
+    double turnInput = driver.getX(Hand.kRight);
+    double speedInput = driver.getY(Hand.kLeft);
+
+    // TODO: Add control for climber here (need to be careful about accidental
+    // deployment)
+
+    if (driver.getTriggerAxis(Hand.kRight) < 0.5) {
+      turnInput = inputTransformer.transformDrive(turnInput);
+      speedInput = inputTransformer.transformDrive(speedInput);
+    }
+    if (driver.getBumper(GenericHID.Hand.kRight)) {
+      speedInput = -speedInput;
+    }
+
+    drive.arcadeDrive(turnInput, speedInput);
+
     manipulation.lift(operator.getY(Hand.kLeft));
     scoring.tilt(operator.getY(Hand.kRight));
 
@@ -289,9 +329,14 @@ public class Robot extends TimedRobot {
 
     double collectionSpeed = speedRight - speedLeft;
     scoring.roll(collectionSpeed);
+  }
 
-    // TODO: Add control for climber here (need to be careful about accidental
-    // deployment)
+  /**
+   * This function is called periodically during operator control.
+   */
+  @Override
+  public void teleopPeriodic() {
+    humanControl();
     log();
   }
 
