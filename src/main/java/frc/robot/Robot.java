@@ -259,6 +259,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     // Run autonomous code (state machines, etc.)
+    humanControl();
     log();
   }
 
@@ -269,10 +270,10 @@ public class Robot extends TimedRobot {
   }
 
   /**
-   * This function is called periodically during operator control.
+   * Factor out all human controls into a common function so we can drive during
+   * the sandstorm period.
    */
-  @Override
-  public void teleopPeriodic() {
+  private void humanControl() {
     // Run teleop code (interpreting input, etc.)
     double turnInput = driver.getX(Hand.kRight);
     double speedInput = driver.getY(Hand.kLeft);
@@ -315,6 +316,14 @@ public class Robot extends TimedRobot {
 
     double collectionSpeed = speedRight - speedLeft;
     scoring.roll(collectionSpeed);
+  }
+
+  /**
+   * This function is called periodically during operator control.
+   */
+  @Override
+  public void teleopPeriodic() {
+    humanControl();
     log();
   }
 
