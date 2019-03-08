@@ -11,10 +11,8 @@ import frc.robot.logging.Loggable;
 
 public class DrivetrainLift implements Loggable {
 
-  private LoggableDoubleSolenoid frontLiftL;
-  private LoggableDoubleSolenoid frontLiftR;
-  private LoggableDoubleSolenoid backLiftL;
-  private LoggableDoubleSolenoid backLiftR;
+  private LoggableDoubleSolenoid frontLift;
+  private LoggableDoubleSolenoid backLift;
 
   private LoggableTalonSRX rollerTalon;
 
@@ -23,50 +21,41 @@ public class DrivetrainLift implements Loggable {
    *
    * @param rollerTalon The talon used for rolling forward
    *
-   * @param frontLiftL  The front left solenoid
-   * @param frontLiftR  The front right solenoid
-   * @param backLiftL   The rear left solenoid
-   * @param backLiftR   The rear right solenoid
+   * @param frontLift   The front solenoid
+   * @param backLift    The rear solenoid
    */
-  DrivetrainLift(LoggableTalonSRX rollerTalon, LoggableDoubleSolenoid frontLiftL, LoggableDoubleSolenoid frontLiftR,
-      LoggableDoubleSolenoid backLiftL, LoggableDoubleSolenoid backLiftR) {
+  DrivetrainLift(LoggableTalonSRX rollerTalon, LoggableDoubleSolenoid frontLift, LoggableDoubleSolenoid backLiftL) {
     this.rollerTalon = rollerTalon;
-    this.frontLiftL = frontLiftL;
-    this.frontLiftR = frontLiftR;
-    this.backLiftL = backLiftL;
-    this.backLiftR = backLiftR;
+    this.frontLift = frontLift;
+    this.backLift = backLiftL;
   }
 
   /**
    * Pushes the front lift out
    */
   public void frontLiftOut() {
-    frontLiftL.set(DoubleSolenoid.Value.kForward);
-    frontLiftR.set(DoubleSolenoid.Value.kForward);
+    frontLift.set(DoubleSolenoid.Value.kForward);
   }
 
   /**
    * Pulls front lift in
    */
   public void frontLiftIn() {
-    frontLiftL.set(DoubleSolenoid.Value.kReverse);
-    frontLiftR.set(DoubleSolenoid.Value.kReverse);
+    frontLift.set(DoubleSolenoid.Value.kReverse);
   }
 
   /**
    * Pushes back lift out
    */
   public void backLiftOut() {
-    backLiftL.set(DoubleSolenoid.Value.kForward);
-    backLiftR.set(DoubleSolenoid.Value.kForward);
+    backLift.set(DoubleSolenoid.Value.kForward);
   }
 
   /**
    * Pulls back lift in
    */
   public void backLiftIn() {
-    backLiftL.set(DoubleSolenoid.Value.kReverse);
-    backLiftR.set(DoubleSolenoid.Value.kReverse);
+    backLift.set(DoubleSolenoid.Value.kReverse);
   }
 
   /**
@@ -85,10 +74,8 @@ public class DrivetrainLift implements Loggable {
    */
   public void setupLogging(DataLogger logger) {
     rollerTalon.setupLogging(logger);
-    frontLiftL.setupLogging(logger);
-    frontLiftR.setupLogging(logger);
-    backLiftL.setupLogging(logger);
-    backLiftR.setupLogging(logger);
+    frontLift.setupLogging(logger);
+    backLift.setupLogging(logger);
   }
 
   /**
@@ -98,9 +85,7 @@ public class DrivetrainLift implements Loggable {
    */
   public void log(DataLogger logger) {
     rollerTalon.log(logger);
-    frontLiftL.log(logger);
-    frontLiftR.log(logger);
-    backLiftL.log(logger);
-    backLiftR.log(logger);
+    frontLift.log(logger);
+    backLift.log(logger);
   }
 }

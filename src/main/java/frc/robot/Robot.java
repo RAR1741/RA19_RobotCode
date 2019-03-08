@@ -161,8 +161,7 @@ public class Robot extends TimedRobot {
 
     logger.info("Starting climber...");
     climber = new DrivetrainLift(new LoggableTalonSRX(13), // roller
-        new LoggableDoubleSolenoid(2, 1, 2), new LoggableDoubleSolenoid(2, 3, 4), new LoggableDoubleSolenoid(3, 1, 2),
-        new LoggableDoubleSolenoid(3, 3, 4));
+        new LoggableDoubleSolenoid(2, 1, 2), new LoggableDoubleSolenoid(2, 3, 4)); // TODO: Update double solenoid IDs
     logger.info("Climber started.");
 
     inputTransformer = new InputTransformer();
