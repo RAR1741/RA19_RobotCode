@@ -106,7 +106,7 @@ public class Robot extends TimedRobot {
     drive.log(dataLogger);
     manipulation.log(dataLogger);
     scoring.log(dataLogger);
-    // climber.log(dataLogger);
+    climber.log(dataLogger);
     navX.log(dataLogger);
 
     dataLogger.writeLine();
@@ -122,7 +122,7 @@ public class Robot extends TimedRobot {
     drive.setupLogging(dataLogger);
     manipulation.setupLogging(dataLogger);
     scoring.setupLogging(dataLogger);
-    // climber.log(dataLogger);
+    climber.log(dataLogger);
     navX.setupLogging(dataLogger);
 
     dataLogger.writeAttributes();
@@ -160,10 +160,8 @@ public class Robot extends TimedRobot {
     logger.info("Scoring started");
 
     logger.info("Starting climber...");
-    // climber = new DrivetrainLift(new LoggableTalonSRX(13), // roller
-    // new LoggableDoubleSolenoid(2, 1, 2), new LoggableDoubleSolenoid(2, 3, 4), new
-    // LoggableDoubleSolenoid(3, 1, 2),
-    // new LoggableDoubleSolenoid(3, 3, 4));
+    climber = new DrivetrainLift(new LoggableTalonSRX(13), // roller
+        new LoggableDoubleSolenoid(3, 4, 5), new LoggableDoubleSolenoid(3, 6, 7));
     logger.info("Climber started.");
 
     inputTransformer = new InputTransformer();
@@ -293,20 +291,22 @@ public class Robot extends TimedRobot {
       // Don't allow the main drivetrain to move.
       drive.arcadeDrive(0, 0);
       // Instead control secondary drive
-      // climber.driveRoll(speedInput);
+      climber.driveRoll(speedInput);
 
-      // if (driver.getBButton()) {
-      // climber.backLiftOut();
-      // } else {
-      // climber.backLiftIn();
-      // }
+      if (driver.getBButton()) {
+        climber.backLiftOut();
+      } else {
+        climber.backLiftIn();
+      }
 
-      // if (driver.getYButton()) {
-      // climber.frontLiftOut();
-      // } else {
-      // climber.frontLiftIn();
-      // }
+      if (driver.getYButton()) {
+        climber.frontLiftOut();
+      } else {
+        climber.frontLiftIn();
+      }
     } else {
+      climber.frontLiftIn();
+      climber.backLiftIn();
       if (driver.getTriggerAxis(Hand.kRight) < 0.5) {
         turnInput = inputTransformer.transformDrive(turnInput);
         speedInput = inputTransformer.transformDrive(speedInput);
