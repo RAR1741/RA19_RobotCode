@@ -160,7 +160,7 @@ public class Robot extends TimedRobot {
     logger.info("Scoring started");
 
     logger.info("Starting climber...");
-    climber = new DrivetrainLift(new LoggableTalonSRX(13), // roller
+    climber = new DrivetrainLift(new LoggableTalonSRX(8), // roller
         new LoggableDoubleSolenoid(3, 4, 5), new LoggableDoubleSolenoid(3, 6, 7));
     logger.info("Climber started.");
 
@@ -287,7 +287,8 @@ public class Robot extends TimedRobot {
     double speedInput = driver.getY(Hand.kLeft);
 
     // If we're in climb mode (either button is pressed)
-    if (driver.getBButton() || driver.getYButton()) {
+    // if (driver.getBButton() || driver.getYButton()) {
+    if (true) {
       // Don't allow the main drivetrain to move.
       drive.arcadeDrive(0, 0);
       // Instead control secondary drive
