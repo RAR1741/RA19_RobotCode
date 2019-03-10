@@ -287,8 +287,7 @@ public class Robot extends TimedRobot {
     double speedInput = driver.getY(Hand.kLeft);
 
     // If we're in climb mode (either button is pressed)
-    // if (driver.getBButton() || driver.getYButton()) {
-    if (true) {
+    if (driver.getBButton() || driver.getYButton()) {
       // Don't allow the main drivetrain to move.
       drive.arcadeDrive(0, 0);
       // Instead control secondary drive
