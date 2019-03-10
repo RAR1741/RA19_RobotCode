@@ -288,8 +288,6 @@ public class Robot extends TimedRobot {
 
     // If we're in climb mode (either button is pressed)
     if (driver.getBButton() || driver.getYButton()) {
-      // Don't allow the main drivetrain to move.
-      drive.arcadeDrive(0, 0);
       // Instead control secondary drive
       climber.driveRoll(speedInput);
 
@@ -307,16 +305,17 @@ public class Robot extends TimedRobot {
     } else {
       climber.frontLiftIn();
       climber.backLiftIn();
-      if (driver.getTriggerAxis(Hand.kRight) < 0.5) {
-        turnInput = inputTransformer.transformDrive(turnInput);
-        speedInput = inputTransformer.transformDrive(speedInput);
-      }
-      if (driver.getBumper(GenericHID.Hand.kRight)) {
-        speedInput = -speedInput;
-      }
-
-      drive.arcadeDrive(turnInput, speedInput);
     }
+
+    if (driver.getTriggerAxis(Hand.kRight) < 0.5) {
+      turnInput = inputTransformer.transformDrive(turnInput);
+      speedInput = inputTransformer.transformDrive(speedInput);
+    }
+    if (driver.getBumper(GenericHID.Hand.kRight)) {
+      speedInput = -speedInput;
+    }
+
+    drive.arcadeDrive(turnInput, speedInput);
 
     manipulation.lift(operator.getY(Hand.kLeft));
     scoring.tilt(operator.getY(Hand.kRight));
