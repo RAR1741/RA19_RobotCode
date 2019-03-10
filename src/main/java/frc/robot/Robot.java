@@ -305,6 +305,7 @@ public class Robot extends TimedRobot {
     } else {
       climber.frontLiftIn();
       climber.backLiftIn();
+      climber.driveRoll(0.0);
     }
 
     if (driver.getTriggerAxis(Hand.kRight) < 0.5) {
