@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import frc.robot.loggable.LoggableDoubleSolenoid;
 import frc.robot.loggable.LoggableTalonSRX;
 import frc.robot.logging.DataLogger;
@@ -24,24 +25,24 @@ public class DrivetrainLift implements Loggable {
    * @param frontLift   The front solenoid
    * @param backLift    The rear solenoid
    */
-  DrivetrainLift(LoggableTalonSRX rollerTalon, LoggableDoubleSolenoid frontLift, LoggableDoubleSolenoid backLiftL) {
+  DrivetrainLift(LoggableTalonSRX rollerTalon, LoggableDoubleSolenoid frontLift, LoggableDoubleSolenoid backLift) {
     this.rollerTalon = rollerTalon;
     this.frontLift = frontLift;
-    this.backLift = backLiftL;
+    this.backLift = backLift;
   }
 
   /**
    * Pushes the front lift out
    */
   public void frontLiftOut() {
-    frontLift.set(DoubleSolenoid.Value.kForward);
+    frontLift.set(DoubleSolenoid.Value.kReverse);
   }
 
   /**
    * Pulls front lift in
    */
   public void frontLiftIn() {
-    frontLift.set(DoubleSolenoid.Value.kReverse);
+    frontLift.set(DoubleSolenoid.Value.kForward);
   }
 
   /**

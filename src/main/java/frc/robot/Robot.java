@@ -160,8 +160,8 @@ public class Robot extends TimedRobot {
     logger.info("Scoring started");
 
     logger.info("Starting climber...");
-    climber = new DrivetrainLift(new LoggableTalonSRX(13), // roller
-        new LoggableDoubleSolenoid(2, 1, 2), new LoggableDoubleSolenoid(2, 3, 4)); // TODO: Update double solenoid IDs
+    climber = new DrivetrainLift(new LoggableTalonSRX(8), // roller
+        new LoggableDoubleSolenoid(3, 4, 5), new LoggableDoubleSolenoid(3, 6, 7));
     logger.info("Climber started.");
 
     inputTransformer = new InputTransformer();
@@ -288,9 +288,8 @@ public class Robot extends TimedRobot {
 
     // If we're in climb mode (either button is pressed)
     if (driver.getBButton() || driver.getYButton()) {
-      // Don't allow the main drivetrain to move.
-      drive.arcadeDrive(0, 0);
       // Instead control secondary drive
+      speedInput = inputTransformer.transformClimb(speedInput);
       climber.driveRoll(speedInput);
 
       if (driver.getBButton()) {
@@ -305,6 +304,11 @@ public class Robot extends TimedRobot {
         climber.frontLiftIn();
       }
     } else {
+      // Normal drive mode
+      climber.frontLiftIn();
+      climber.backLiftIn();
+      climber.driveRoll(0.0);
+
       if (driver.getTriggerAxis(Hand.kRight) < 0.5) {
         turnInput = inputTransformer.transformDrive(turnInput);
         speedInput = inputTransformer.transformDrive(speedInput);
@@ -312,9 +316,9 @@ public class Robot extends TimedRobot {
       if (driver.getBumper(GenericHID.Hand.kRight)) {
         speedInput = -speedInput;
       }
-
-      drive.arcadeDrive(turnInput, speedInput);
     }
+
+    drive.arcadeDrive(turnInput, speedInput);
 
     manipulation.lift(operator.getY(Hand.kLeft));
     scoring.tilt(operator.getY(Hand.kRight));

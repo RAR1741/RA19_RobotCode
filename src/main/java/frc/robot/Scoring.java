@@ -32,9 +32,9 @@ public class Scoring implements Loggable {
     this.intakePivots = intakePivots;
 
     rollerTalon.setName("Roller");
-    wristTalon.setName("Wrist");
+    // wristTalon.setName("Wrist");
     this.pushers.setName("Pushers");
-    this.intakePivots.setName("Pivots");
+    // this.intakePivots.setName("Pivots");
   }
 
   /**
@@ -84,16 +84,16 @@ public class Scoring implements Loggable {
   }
 
   public void setupLogging(DataLogger dl) {
-    wristTalon.setupLogging(dl);
+    // wristTalon.setupLogging(dl);
     rollerTalon.setupLogging(dl);
     pushers.setupLogging(dl);
-    intakePivots.setupLogging(dl);
+    // intakePivots.setupLogging(dl);
   }
 
   public void log(DataLogger dl) {
-    wristTalon.log(dl);
+    // wristTalon.log(dl);
     rollerTalon.log(dl);
     pushers.log(dl);
-    intakePivots.log(dl);
+    // intakePivots.log(dl);
   }
 }
