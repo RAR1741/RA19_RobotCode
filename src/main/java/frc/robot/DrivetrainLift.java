@@ -22,10 +22,8 @@ public class DrivetrainLift implements Loggable {
    *
    * @param rollerTalon The talon used for rolling forward
    *
-   * @param frontLiftL  The front left solenoid
-   * @param frontLiftR  The front right solenoid
-   * @param backLiftL   The rear left solenoid
-   * @param backLiftR   The rear right solenoid
+   * @param frontLift   The front solenoid
+   * @param backLift    The rear solenoid
    */
   DrivetrainLift(LoggableTalonSRX rollerTalon, LoggableDoubleSolenoid frontLift, LoggableDoubleSolenoid backLift) {
     this.rollerTalon = rollerTalon;
