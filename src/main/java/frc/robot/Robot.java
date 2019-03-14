@@ -316,6 +316,11 @@ public class Robot extends TimedRobot {
       if (driver.getBumper(GenericHID.Hand.kRight)) {
         speedInput = -speedInput;
       }
+
+      // Call line following
+      if (driver.getXButton()) {
+        drive.followLine(0.8);
+      }
     }
 
     drive.arcadeDrive(turnInput, speedInput);
@@ -349,6 +354,7 @@ public class Robot extends TimedRobot {
 
     double collectionSpeed = speedRight - speedLeft;
     scoring.roll(collectionSpeed);
+
   }
 
   /**
