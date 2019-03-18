@@ -319,11 +319,11 @@ public class Robot extends TimedRobot {
 
       // Call line following
       if (driver.getXButton()) {
-        drive.followLine(0.8);
+        followLine(0.8);
+      } else {
+        drive.arcadeDrive(turnInput, speedInput);
       }
     }
-
-    drive.arcadeDrive(turnInput, speedInput);
 
     manipulation.lift(operator.getY(Hand.kLeft));
     scoring.tilt(operator.getY(Hand.kRight));
@@ -382,5 +382,24 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     dataLogger.close();
+  }
+
+  public void followLine(double maxMotorPercent) {
+    double leftMotorPower = .1;
+    double rightMotorPower = .1;
+    double turnspeed = 0.0;
+    double turnmodifier = 0.1;
+
+    if (leftLine.get() && !rightLine.get()) {
+      turnspeed -= turnmodifier;
+    }
+    if (!leftLine.get() && rightLine.get()) {
+      turnspeed += turnmodifier;
+    }
+    if (leftLine.get() && rightLine.get()) {
+      leftMotorPower = 0;
+      rightMotorPower = 0;
+    }
+    drive.arcadeDrive(turnspeed, -0.2);
   }
 }
