@@ -317,6 +317,7 @@ public class Robot extends TimedRobot {
         speedInput = -speedInput;
       }
 
+      // System.out.printf("Speed: %f\n", speedInput);
       // Call line following
       if (driver.getXButton()) {
         followLine(0.8);
@@ -388,18 +389,31 @@ public class Robot extends TimedRobot {
     double leftMotorPower = .1;
     double rightMotorPower = .1;
     double turnspeed = 0.0;
-    double turnmodifier = 0.1;
+    double turnmodifier = 0.2;
+    double forwardspeed = -0.2;
 
-    if (leftLine.get() && !rightLine.get()) {
+    int l = (leftLine.get()) ? 1 : 0;
+    int m = (midLine.get()) ? 1 : 0;
+    int r = (rightLine.get()) ? 1 : 0;
+
+    String bin = String.format("%d%d%d", l, m, r);
+    System.out.println(bin);
+
+    if (bin.equals("100")) {
       turnspeed -= turnmodifier;
-    }
-    if (!leftLine.get() && rightLine.get()) {
+    } else if (bin.equals("110")) {
+      turnspeed -= turnmodifier;
+    } else if (bin.equals("001")) {
       turnspeed += turnmodifier;
-    }
-    if (leftLine.get() && rightLine.get()) {
+    } else if (bin.equals("011")) {
+      turnspeed += turnmodifier;
+    } else if (bin.equals("101")) {
+      System.out.println("Subscribe to Pewdiepie");
       leftMotorPower = 0;
       rightMotorPower = 0;
+    } else {
+      System.out.println("Jordan");
     }
-    drive.arcadeDrive(turnspeed, -0.2);
+    drive.arcadeDrive(turnspeed, forwardspeed);
   }
 }
