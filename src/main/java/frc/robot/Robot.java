@@ -316,9 +316,15 @@ public class Robot extends TimedRobot {
       if (driver.getBumper(GenericHID.Hand.kRight)) {
         speedInput = -speedInput;
       }
-    }
 
-    drive.arcadeDrive(turnInput, speedInput);
+      // System.out.printf("Speed: %f\n", speedInput);
+      // Call line following
+      if (driver.getXButton()) {
+        followLine(0.8);
+      } else {
+        drive.arcadeDrive(turnInput, speedInput);
+      }
+    }
 
     manipulation.lift(operator.getY(Hand.kLeft));
     scoring.tilt(operator.getY(Hand.kRight));
@@ -349,6 +355,7 @@ public class Robot extends TimedRobot {
 
     double collectionSpeed = speedRight - speedLeft;
     scoring.roll(collectionSpeed);
+
   }
 
   /**
@@ -376,5 +383,37 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     dataLogger.close();
+  }
+
+  public void followLine(double maxMotorPercent) {
+    double leftMotorPower = .1;
+    double rightMotorPower = .1;
+    double turnspeed = 0.0;
+    double turnmodifier = 0.3;
+    double forwardspeed = -0.15;
+
+    int l = (leftLine.get()) ? 1 : 0;
+    int m = (midLine.get()) ? 1 : 0;
+    int r = (rightLine.get()) ? 1 : 0;
+
+    String bin = String.format("%d%d%d", l, m, r);
+    System.out.println(bin);
+
+    if (bin.equals("100")) {
+      turnspeed -= turnmodifier;
+    } else if (bin.equals("110")) {
+      turnspeed -= turnmodifier;
+    } else if (bin.equals("001")) {
+      turnspeed += turnmodifier;
+    } else if (bin.equals("011")) {
+      turnspeed += turnmodifier;
+    } else if (bin.equals("101")) {
+      System.out.println("Subscribe to Pewdiepie");
+      leftMotorPower = 0;
+      rightMotorPower = 0;
+    } else {
+      System.out.println("Jordan");
+    }
+    drive.arcadeDrive(turnspeed, forwardspeed);
   }
 }

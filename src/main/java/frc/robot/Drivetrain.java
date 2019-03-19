@@ -3,6 +3,7 @@ package frc.robot;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.loggable.LoggableTalonSRX;
 import frc.robot.logging.DataLogger;
 import frc.robot.logging.Loggable;
@@ -23,6 +24,10 @@ public class Drivetrain implements Loggable {
   private LoggableTalonSRX leftSlave;
   private LoggableTalonSRX rightTalon;
   private LoggableTalonSRX rightSlave;
+
+  private DigitalInput leftLine;
+  private DigitalInput midLine;
+  private DigitalInput rightLine;
 
   /**
    * Constructor
@@ -86,10 +91,10 @@ public class Drivetrain implements Loggable {
   /**
    * Drives the robot with an tank style drive
    *
-   * @param xDrive The speed to drive the left drivetrain (ranges
-   *               from -1.0 to +1.0)
-   * @param yDrive The speed to drive the right drivetrain (ranges
-   *               from -1.0 to +1.0)
+   * @param xDrive The speed to drive the left drivetrain (ranges from -1.0 to
+   *               +1.0)
+   * @param yDrive The speed to drive the right drivetrain (ranges from -1.0 to
+   *               +1.0)
    */
   public void tankDrive(double leftDrive, double rightDrive) {
     this.driveLeft(leftDrive);
@@ -120,6 +125,28 @@ public class Drivetrain implements Loggable {
     leftSlave.log(logger);
     rightTalon.log(logger);
     rightSlave.log(logger);
+  }
+
+  /**
+   * Uses outside line sensors to follow the line.
+   *
+   * @param maxMotorPercent maximum motor percent
+   */
+  public void followLine(double maxMotorPercent) {
+    double leftMotorPower = 1;
+    double rightMotorPower = 1;
+    if (leftLine.get() && !rightLine.get()) {
+      leftMotorPower = 0.75;
+    }
+    if (!leftLine.get() && rightLine.get()) {
+      rightMotorPower = 0.75;
+    }
+    if (leftLine.get() && rightLine.get()) {
+      leftMotorPower = 0;
+      rightMotorPower = 0;
+    }
+    driveLeft(leftMotorPower * maxMotorPercent);
+    driveRight(rightMotorPower * maxMotorPercent);
   }
 
   public Double getOutputCurrent(WPI_TalonSRX talon) {
