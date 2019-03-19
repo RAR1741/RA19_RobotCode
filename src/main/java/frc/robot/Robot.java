@@ -389,8 +389,8 @@ public class Robot extends TimedRobot {
     double leftMotorPower = .1;
     double rightMotorPower = .1;
     double turnspeed = 0.0;
-    double turnmodifier = 0.2;
-    double forwardspeed = -0.2;
+    double turnmodifier = 0.3;
+    double forwardspeed = -0.15;
 
     int l = (leftLine.get()) ? 1 : 0;
     int m = (midLine.get()) ? 1 : 0;
