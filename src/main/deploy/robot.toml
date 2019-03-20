@@ -15,3 +15,8 @@ positions = [
   0, # Home
   100
 ]
+
+[input]
+# Maximum turn speed (in joystick coordinates)
+maxTurn = 0.6
+maxClimbSpeed = 0.2

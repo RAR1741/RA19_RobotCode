@@ -32,9 +32,9 @@ public class Scoring implements Loggable {
     this.intakePivots = intakePivots;
 
     rollerTalon.setName("Roller");
-    wristTalon.setName("Wrist");
+    // wristTalon.setName("Wrist");
     this.pushers.setName("Pushers");
-    this.intakePivots.setName("Pivots");
+    // this.intakePivots.setName("Pivots");
   }
 
   /**
@@ -43,7 +43,7 @@ public class Scoring implements Loggable {
    * @param speed the speed to rotate the roller motor (ranges from -1.0 to 1.0)
    */
   public void roll(double speed) {
-    rollerTalon.set(ControlMode.PercentOutput, speed);
+    // rollerTalon.set(ControlMode.PercentOutput, speed);
   }
 
   /**
@@ -64,14 +64,14 @@ public class Scoring implements Loggable {
    * Pushes the intake down.
    */
   public void intakeDown() {
-    intakePivots.set(LoggableDoubleSolenoid.Value.kForward);
+    // intakePivots.set(LoggableDoubleSolenoid.Value.kForward);
   }
 
   /**
    * Pulls the intake up.
    */
   public void intakeUp() {
-    intakePivots.set(LoggableDoubleSolenoid.Value.kReverse);
+    // intakePivots.set(LoggableDoubleSolenoid.Value.kReverse);
   }
 
   /**
@@ -84,16 +84,16 @@ public class Scoring implements Loggable {
   }
 
   public void setupLogging(DataLogger dl) {
-    wristTalon.setupLogging(dl);
+    // wristTalon.setupLogging(dl);
     rollerTalon.setupLogging(dl);
     pushers.setupLogging(dl);
-    intakePivots.setupLogging(dl);
+    // intakePivots.setupLogging(dl);
   }
 
   public void log(DataLogger dl) {
-    wristTalon.log(dl);
+    // wristTalon.log(dl);
     rollerTalon.log(dl);
     pushers.log(dl);
-    intakePivots.log(dl);
+    // intakePivots.log(dl);
   }
 }
