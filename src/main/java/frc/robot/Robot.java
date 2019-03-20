@@ -153,6 +153,7 @@ public class Robot extends TimedRobot {
     logger.info("Starting manipulation...");
     manipulation = new Manipulation(new LoggableTalonSRX(12));
     logger.info("Manipulation started");
+    configurables.add(manipulation);
 
     logger.info("Starting scoring...");
     scoring = new Scoring(new LoggableTalonSRX(9), new LoggableTalonSRX(10), new LoggableDoubleSolenoid(2, 6, 7),

@@ -9,7 +9,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXPIDSetConfiguration;
 import com.moandjiezana.toml.Toml;
 
-public class Manipulation implements Loggable {
+public class Manipulation implements Loggable, Configurable {
   private LoggableTalonSRX liftTalon;
 
   private int tolerance;
@@ -39,7 +39,7 @@ public class Manipulation implements Loggable {
    *
    * @param config the parsed TOML configuration file
    */
-  void configure(Toml config) {
+  public void configure(Toml config) {
     TalonSRXConfiguration talonConfig = new TalonSRXConfiguration();
     talonConfig.slot0.kP = config.getDouble("manipulation.P", 1.0); // TODO: Come back after tuning values to change "1"
     talonConfig.slot0.kI = config.getDouble("manipulation.I", 0.0);
