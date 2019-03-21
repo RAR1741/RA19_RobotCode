@@ -328,22 +328,22 @@ public class Robot extends TimedRobot {
     case -1: // None
       break;
     case 0: // d-pad up
-      scoring.intakeDown();
+      manipulation.setSetpoint(1000);
       // scoring.push();
       break;
     case 180: // d-pad down
-      scoring.intakeUp();
+      manipulation.setSetpoint(2000);
       // scoring.retract();
       break;
     default:
       break;
     }
 
-    if (operator.getAButton()) {
-      scoring.push();
-    } else {
-      scoring.retract();
-    }
+    // if (operator.getAButton()) {
+    // scoring.push();
+    // } else {
+    // scoring.retract();
+    // }
 
     double speedLeft = operator.getTriggerAxis(Hand.kLeft);
     double speedRight = operator.getTriggerAxis(Hand.kRight);
