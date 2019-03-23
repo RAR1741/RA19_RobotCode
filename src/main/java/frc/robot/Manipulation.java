@@ -54,7 +54,7 @@ public class Manipulation implements Loggable, Configurable {
    * @param targetPosition wanted position
    */
   public void setSetpoint(int targetPosition) {
-    liftTalon.set(ControlMode.Position, targetPosition);
+    // liftTalon.set(ControlMode.Position, targetPosition);
   }
 
   /**

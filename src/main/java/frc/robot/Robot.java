@@ -71,6 +71,7 @@ public class Robot extends TimedRobot {
   private InputTransformer inputTransformer;
   private Timer timer;
   private List<Configurable> configurables;
+  private LoggableTalonSRX manipTalon;
 
   private VisionThread visionThread;
   private double centerX = 0.0;
@@ -150,8 +151,9 @@ public class Robot extends TimedRobot {
     drive = new Drivetrain(4, 5, 6, 7);
     logger.info("Drivetrain started");
 
+    manipTalon = new LoggableTalonSRX(11);
     logger.info("Starting manipulation...");
-    manipulation = new Manipulation(new LoggableTalonSRX(12));
+    manipulation = new Manipulation(manipTalon);
     logger.info("Manipulation started");
     configurables.add(manipulation);
 
@@ -359,6 +361,9 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     humanControl();
     log();
+
+    System.out.printf("Limit Switch fwd: %b\n", manipTalon.getSensorCollection().isFwdLimitSwitchClosed());
+    System.out.printf("Limit Switch rev: %b\n", manipTalon.getSensorCollection().isRevLimitSwitchClosed());
   }
 
   @Override
@@ -377,5 +382,11 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     dataLogger.close();
+  }
+
+  @Override
+  public void disabledPeriodic() {
+    System.out.printf("Limit Switch fwd: %b\n", manipTalon.getSensorCollection().isFwdLimitSwitchClosed());
+    System.out.printf("Limit Switch rev: %b\n", manipTalon.getSensorCollection().isRevLimitSwitchClosed());
   }
 }
