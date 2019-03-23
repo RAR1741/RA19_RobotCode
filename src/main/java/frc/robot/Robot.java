@@ -98,6 +98,7 @@ public class Robot extends TimedRobot {
   }
 
   private void log() {
+    long startTime = System.nanoTime();
     dataLogger.log("timer", timer.get());
     dataLogger.log("lineLeft", leftLine.get());
     dataLogger.log("lineCenter", midLine.get());
@@ -111,6 +112,12 @@ public class Robot extends TimedRobot {
     navX.log(dataLogger);
 
     dataLogger.writeLine();
+    long endTime = System.nanoTime();
+
+    long duration = (endTime - startTime);
+    double durationInMs = (double) duration / 1000000.0;
+
+    System.out.printf("Log duration: %f ms\n", durationInMs);
   }
 
   private void setupDataLogging() {
