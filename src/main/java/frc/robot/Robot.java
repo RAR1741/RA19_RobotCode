@@ -98,26 +98,26 @@ public class Robot extends TimedRobot {
   }
 
   private void log() {
-    long startTime = System.nanoTime();
-    dataLogger.log("timer", timer.get());
-    dataLogger.log("lineLeft", leftLine.get());
-    dataLogger.log("lineCenter", midLine.get());
-    dataLogger.log("lineRight", rightLine.get());
-    driver.log(dataLogger);
-    operator.log(dataLogger);
-    drive.log(dataLogger);
-    manipulation.log(dataLogger);
-    scoring.log(dataLogger);
-    climber.log(dataLogger);
-    navX.log(dataLogger);
+    // long startTime = System.nanoTime();
+    // dataLogger.log("timer", timer.get());
+    // dataLogger.log("lineLeft", leftLine.get());
+    // dataLogger.log("lineCenter", midLine.get());
+    // dataLogger.log("lineRight", rightLine.get());
+    // driver.log(dataLogger);
+    // operator.log(dataLogger);
+    // drive.log(dataLogger);
+    // manipulation.log(dataLogger);
+    // scoring.log(dataLogger);
+    // climber.log(dataLogger);
+    // navX.log(dataLogger);
 
-    dataLogger.writeLine();
-    long endTime = System.nanoTime();
+    // dataLogger.writeLine();
+    // long endTime = System.nanoTime();
 
-    long duration = (endTime - startTime);
-    double durationInMs = (double) duration / 1000000.0;
+    // long duration = (endTime - startTime);
+    // double durationInMs = (double) duration / 1000000.0;
 
-    System.out.printf("Log duration: %f ms\n", durationInMs);
+    // System.out.printf("Log duration: %f ms\n", durationInMs);
   }
 
   private void setupDataLogging() {
@@ -158,7 +158,7 @@ public class Robot extends TimedRobot {
     drive = new Drivetrain(4, 5, 6, 7);
     logger.info("Drivetrain started");
 
-    manipTalon = new LoggableTalonSRX(11);
+    manipTalon = new LoggableTalonSRX(12);
     logger.info("Starting manipulation...");
     manipulation = new Manipulation(manipTalon);
     logger.info("Manipulation started");
@@ -368,6 +368,7 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     humanControl();
     log();
+    System.out.printf("encoder ticks: %d\n", manipTalon.getSelectedSensorPosition());
 
     System.out.printf("Limit Switch fwd: %b\n", manipTalon.getSensorCollection().isFwdLimitSwitchClosed());
     System.out.printf("Limit Switch rev: %b\n", manipTalon.getSensorCollection().isRevLimitSwitchClosed());
@@ -393,7 +394,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
-    System.out.printf("Limit Switch fwd: %b\n", manipTalon.getSensorCollection().isFwdLimitSwitchClosed());
-    System.out.printf("Limit Switch rev: %b\n", manipTalon.getSensorCollection().isRevLimitSwitchClosed());
+    // System.out.printf("Limit Switch fwd: %b\n",
+    // manipTalon.getSensorCollection().isFwdLimitSwitchClosed());
+    // System.out.printf("Limit Switch rev: %b\n",
+    // manipTalon.getSensorCollection().isRevLimitSwitchClosed());
   }
 }
