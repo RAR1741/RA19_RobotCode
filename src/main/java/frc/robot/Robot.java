@@ -330,11 +330,11 @@ public class Robot extends TimedRobot {
 
     drive.arcadeDrive(turnInput, speedInput);
 
-    manipulation.lift(operator.getY(Hand.kLeft));
     scoring.tilt(operator.getY(Hand.kRight));
 
     switch (operator.getPOV()) {
     case -1: // None
+      manipulation.lift(operator.getY(Hand.kLeft));
       break;
     case 0: // d-pad up
       manipulation.setSetpoint(1000);
