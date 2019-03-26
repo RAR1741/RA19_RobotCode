@@ -10,6 +10,12 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRXPIDSetConfiguration;
 import com.moandjiezana.toml.Toml;
 
 public class Manipulation implements Loggable, Configurable {
+  public enum State {
+    kStart, kHome, kHold, kMoving, kManual
+  }
+
+  private State state;
+
   private LoggableTalonSRX liftTalon;
 
   private int tolerance;
@@ -23,6 +29,48 @@ public class Manipulation implements Loggable, Configurable {
     liftTalon = liftCan;
     liftTalon.setName("Lift");
     tolerance = 10;
+    state = State.kStart;
+  }
+
+  /**
+   * auto - autonomous control of the lift.
+   */
+  public void auto() {
+    final double downSpeed = -0.1;
+    switch (state) {
+    case kStart:
+      lift(downSpeed);
+      state = State.kHome;
+      break;
+    case kHome:
+      lift(downSpeed);
+      if (liftTalon.getSensorCollection().isRevLimitSwitchClosed()) {
+        lift(0);
+        liftTalon.setSelectedSensorPosition(0);
+        liftTalon.set(ControlMode.Position, 0);
+        state = State.kHold;
+      }
+    case kHold:
+      // nothing
+      break;
+    case kMoving:
+      if (onTarget()) {
+        state = State.kHold;
+      }
+      break;
+    case kManual:
+      // nothing
+      break;
+    }
+  }
+
+  /**
+   * getState
+   *
+   * @return state
+   */
+  public State getState() {
+    return state;
   }
 
   /**
@@ -40,12 +88,14 @@ public class Manipulation implements Loggable, Configurable {
    * @param config the parsed TOML configuration file
    */
   public void configure(Toml config) {
+    tolerance = config.getLong("manipulation.tolerance", 10l).intValue();
     TalonSRXConfiguration talonConfig = new TalonSRXConfiguration();
     talonConfig.slot0.kP = config.getDouble("manipulation.P", 1.0); // TODO: Come back after tuning values to change "1"
     talonConfig.slot0.kI = config.getDouble("manipulation.I", 0.0);
     talonConfig.slot0.kD = config.getDouble("manipulation.D", 0.0);
     liftTalon.configAllSettings(talonConfig);
-    tolerance = config.getLong("manipulation.tolerance", 10l).intValue();
+    liftTalon.configAllowableClosedloopError(0, tolerance, 0);
+    liftTalon.setSensorPhase(true);
   }
 
   /**
