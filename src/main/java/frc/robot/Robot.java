@@ -73,6 +73,7 @@ public class Robot extends TimedRobot {
   private Timer timer;
   private List<Configurable> configurables;
   private LoggableTalonSRX manipTalon;
+  private boolean aButtonState = false;
 
   private VisionThread visionThread;
   private double centerX = 0.0;
@@ -137,6 +138,11 @@ public class Robot extends TimedRobot {
     dataLogger.writeAttributes();
   }
 
+  private void humanInit() {
+    scoring.push();
+    scoring.intakeDown();
+  }
+
   /**
    * This function is run when the robot is first started up and should be used
    * for any initialization code.
@@ -168,6 +174,8 @@ public class Robot extends TimedRobot {
     logger.info("Starting scoring...");
     scoring = new Scoring(new LoggableTalonSRX(9), new LoggableTalonSRX(10), new LoggableDoubleSolenoid(2, 6, 7),
         new LoggableDoubleSolenoid(2, 4, 5));
+    scoring.push();
+    scoring.intakeDown();
     logger.info("Scoring started");
 
     logger.info("Starting climber...");
@@ -270,6 +278,7 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     logger.info("Entering autonomous mode.");
     reloadConfiguration();
+    humanInit();
     startDataLogging("auto");
   }
 
@@ -286,6 +295,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     reloadConfiguration();
+    humanInit();
     startDataLogging("teleop");
   }
 
@@ -354,16 +364,19 @@ public class Robot extends TimedRobot {
       break;
     }
 
-    if (operator.getAButton()) {
-      scoring.retract();
-    } else {
-      scoring.push();
+    if (operator.getAButtonPressed()) {
+      aButtonState = !aButtonState;
+      if (aButtonState) {
+        scoring.retract();
+      } else {
+        scoring.push();
+      }
     }
 
-    if (operator.getBButton()) {
-      scoring.intakeDown();
-    } else {
+    if (operator.getXButton()) {
       scoring.intakeUp();
+    } else {
+      scoring.intakeDown();
     }
 
     double speedLeft = operator.getTriggerAxis(Hand.kLeft);
@@ -404,7 +417,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledInit() {
-    dataLogger.close();
+    // dataLogger.close();
   }
 
   @Override
