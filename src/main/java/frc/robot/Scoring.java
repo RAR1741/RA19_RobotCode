@@ -64,14 +64,14 @@ public class Scoring implements Loggable {
    * Pushes the intake down.
    */
   public void intakeDown() {
-    // intakePivots.set(LoggableDoubleSolenoid.Value.kForward);
+    intakePivots.set(LoggableDoubleSolenoid.Value.kForward);
   }
 
   /**
    * Pulls the intake up.
    */
   public void intakeUp() {
-    // intakePivots.set(LoggableDoubleSolenoid.Value.kReverse);
+    intakePivots.set(LoggableDoubleSolenoid.Value.kReverse);
   }
 
   /**

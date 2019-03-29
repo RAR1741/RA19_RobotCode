@@ -19,6 +19,7 @@ import com.moandjiezana.toml.Toml;
 import org.opencv.core.Rect;
 import org.opencv.imgproc.Imgproc;
 import edu.wpi.cscore.UsbCamera;
+import edu.wpi.cscore.VideoSource;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.vision.VisionThread;
 import edu.wpi.first.wpilibj.AnalogInput;
@@ -198,7 +199,8 @@ public class Robot extends TimedRobot {
       // ledLights.set(DoubleSolenoid.Value.kForward);
 
       camera = CameraServer.getInstance().startAutomaticCapture();
-      camera.setResolution(IMG_WIDTH, IMG_HEIGHT);
+      camera.setFPS(20);
+      camera.setConnectionStrategy(VideoSource.ConnectionStrategy.kKeepOpen);
 
       // visionThread = new VisionThread(camera, new MyVisionPipeline(), pipeline -> {
       // if (!pipeline.filterContoursOutput().isEmpty()) {
@@ -348,11 +350,17 @@ public class Robot extends TimedRobot {
       break;
     }
 
-    // if (operator.getAButton()) {
-    // scoring.push();
-    // } else {
-    // scoring.retract();
-    // }
+    if (operator.getAButton()) {
+      scoring.retract();
+    } else {
+      scoring.push();
+    }
+
+    if (operator.getBButton()) {
+      scoring.intakeDown();
+    } else {
+      scoring.intakeUp();
+    }
 
     double speedLeft = operator.getTriggerAxis(Hand.kLeft);
     double speedRight = operator.getTriggerAxis(Hand.kRight);
@@ -368,10 +376,13 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     humanControl();
     log();
-    System.out.printf("encoder ticks: %d\n", manipTalon.getSelectedSensorPosition());
+    // System.out.printf("encoder ticks: %d\n",
+    // manipTalon.getSelectedSensorPosition());
 
-    System.out.printf("Limit Switch fwd: %b\n", manipTalon.getSensorCollection().isFwdLimitSwitchClosed());
-    System.out.printf("Limit Switch rev: %b\n", manipTalon.getSensorCollection().isRevLimitSwitchClosed());
+    // System.out.printf("Limit Switch fwd: %b\n",
+    // manipTalon.getSensorCollection().isFwdLimitSwitchClosed());
+    // System.out.printf("Limit Switch rev: %b\n",
+    // manipTalon.getSensorCollection().isRevLimitSwitchClosed());
   }
 
   @Override
