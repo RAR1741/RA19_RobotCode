@@ -325,6 +325,10 @@ public class Robot extends TimedRobot {
         turnInput = inputTransformer.transformDrive(turnInput);
         speedInput = inputTransformer.transformDrive(speedInput);
       }
+      if (driver.getTriggerAxis(Hand.kLeft) >= 0.5) {
+        turnInput = inputTransformer.transformClimb(turnInput);
+        turnInput = inputTransformer.transformClimb(speedInput);
+      }
       if (driver.getBumper(GenericHID.Hand.kRight)) {
         speedInput = -speedInput;
       }
@@ -339,11 +343,11 @@ public class Robot extends TimedRobot {
       manipulation.lift(operator.getY(Hand.kLeft));
       break;
     case 0: // d-pad up
-      manipulation.setSetpoint(1000);
+      // manipulation.setSetpoint(1000);
       // scoring.push();
       break;
     case 180: // d-pad down
-      manipulation.setSetpoint(2000);
+      // manipulation.setSetpoint(2000);
       // scoring.retract();
       break;
     default:
