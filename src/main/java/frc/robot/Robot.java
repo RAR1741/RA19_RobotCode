@@ -295,7 +295,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     reloadConfiguration();
-    humanInit();
+    // humanInit();
     startDataLogging("teleop");
   }
 
@@ -384,6 +384,7 @@ public class Robot extends TimedRobot {
 
     double collectionSpeed = speedRight - speedLeft;
     scoring.roll(collectionSpeed);
+    // System.out.printf("Scoring: %b %b\n", aButtonState, scoring.isExtended());
   }
 
   /**

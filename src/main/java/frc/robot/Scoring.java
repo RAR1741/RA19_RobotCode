@@ -96,4 +96,8 @@ public class Scoring implements Loggable {
     pushers.log(dl);
     // intakePivots.log(dl);
   }
+
+  public boolean isExtended() {
+    return pushers.get() == LoggableDoubleSolenoid.Value.kReverse;
+  }
 }
