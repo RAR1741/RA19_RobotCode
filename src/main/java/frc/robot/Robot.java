@@ -19,6 +19,7 @@ import com.moandjiezana.toml.Toml;
 import org.opencv.core.Rect;
 import org.opencv.imgproc.Imgproc;
 import edu.wpi.cscore.UsbCamera;
+import edu.wpi.cscore.VideoSource;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.vision.VisionThread;
 import edu.wpi.first.wpilibj.AnalogInput;
@@ -71,6 +72,8 @@ public class Robot extends TimedRobot {
   private InputTransformer inputTransformer;
   private Timer timer;
   private List<Configurable> configurables;
+  private LoggableTalonSRX manipTalon;
+  private boolean aButtonState = false;
 
   private VisionThread visionThread;
   private double centerX = 0.0;
@@ -97,19 +100,26 @@ public class Robot extends TimedRobot {
   }
 
   private void log() {
-    dataLogger.log("timer", timer.get());
-    dataLogger.log("lineLeft", leftLine.get());
-    dataLogger.log("lineCenter", midLine.get());
-    dataLogger.log("lineRight", rightLine.get());
-    driver.log(dataLogger);
-    operator.log(dataLogger);
-    drive.log(dataLogger);
-    manipulation.log(dataLogger);
-    scoring.log(dataLogger);
-    climber.log(dataLogger);
-    navX.log(dataLogger);
+    // long startTime = System.nanoTime();
+    // dataLogger.log("timer", timer.get());
+    // dataLogger.log("lineLeft", leftLine.get());
+    // dataLogger.log("lineCenter", midLine.get());
+    // dataLogger.log("lineRight", rightLine.get());
+    // driver.log(dataLogger);
+    // operator.log(dataLogger);
+    // drive.log(dataLogger);
+    // manipulation.log(dataLogger);
+    // scoring.log(dataLogger);
+    // climber.log(dataLogger);
+    // navX.log(dataLogger);
 
-    dataLogger.writeLine();
+    // dataLogger.writeLine();
+    // long endTime = System.nanoTime();
+
+    // long duration = (endTime - startTime);
+    // double durationInMs = (double) duration / 1000000.0;
+
+    // System.out.printf("Log duration: %f ms\n", durationInMs);
   }
 
   private void setupDataLogging() {
@@ -126,6 +136,11 @@ public class Robot extends TimedRobot {
     navX.setupLogging(dataLogger);
 
     dataLogger.writeAttributes();
+  }
+
+  private void humanInit() {
+    scoring.push();
+    scoring.intakeDown();
   }
 
   /**
@@ -150,13 +165,17 @@ public class Robot extends TimedRobot {
     drive = new Drivetrain(4, 5, 6, 7);
     logger.info("Drivetrain started");
 
+    manipTalon = new LoggableTalonSRX(12);
     logger.info("Starting manipulation...");
-    manipulation = new Manipulation(new LoggableTalonSRX(12));
+    manipulation = new Manipulation(manipTalon);
     logger.info("Manipulation started");
+    configurables.add(manipulation);
 
     logger.info("Starting scoring...");
     scoring = new Scoring(new LoggableTalonSRX(9), new LoggableTalonSRX(10), new LoggableDoubleSolenoid(2, 6, 7),
         new LoggableDoubleSolenoid(2, 4, 5));
+    scoring.push();
+    scoring.intakeDown();
     logger.info("Scoring started");
 
     logger.info("Starting climber...");
@@ -188,7 +207,8 @@ public class Robot extends TimedRobot {
       // ledLights.set(DoubleSolenoid.Value.kForward);
 
       camera = CameraServer.getInstance().startAutomaticCapture();
-      camera.setResolution(IMG_WIDTH, IMG_HEIGHT);
+      camera.setFPS(20);
+      camera.setConnectionStrategy(VideoSource.ConnectionStrategy.kKeepOpen);
 
       // visionThread = new VisionThread(camera, new MyVisionPipeline(), pipeline -> {
       // if (!pipeline.filterContoursOutput().isEmpty()) {
@@ -258,6 +278,7 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     logger.info("Entering autonomous mode.");
     reloadConfiguration();
+    humanInit();
     startDataLogging("auto");
   }
 
@@ -274,6 +295,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     reloadConfiguration();
+    // humanInit();
     startDataLogging("teleop");
   }
 
@@ -313,6 +335,10 @@ public class Robot extends TimedRobot {
         turnInput = inputTransformer.transformDrive(turnInput);
         speedInput = inputTransformer.transformDrive(speedInput);
       }
+      if (driver.getTriggerAxis(Hand.kLeft) >= 0.5) {
+        turnInput = inputTransformer.transformClimb(turnInput);
+        turnInput = inputTransformer.transformClimb(speedInput);
+      }
       if (driver.getBumper(GenericHID.Hand.kRight)) {
         speedInput = -speedInput;
       }
@@ -320,28 +346,37 @@ public class Robot extends TimedRobot {
 
     drive.arcadeDrive(turnInput, speedInput);
 
-    manipulation.lift(operator.getY(Hand.kLeft));
     scoring.tilt(operator.getY(Hand.kRight));
 
     switch (operator.getPOV()) {
     case -1: // None
+      manipulation.lift(operator.getY(Hand.kLeft));
       break;
     case 0: // d-pad up
-      scoring.intakeDown();
+      // manipulation.setSetpoint(1000);
       // scoring.push();
       break;
     case 180: // d-pad down
-      scoring.intakeUp();
+      // manipulation.setSetpoint(2000);
       // scoring.retract();
       break;
     default:
       break;
     }
 
-    if (operator.getAButton()) {
-      scoring.push();
+    if (operator.getAButtonPressed()) {
+      aButtonState = !aButtonState;
+      if (aButtonState) {
+        scoring.retract();
+      } else {
+        scoring.push();
+      }
+    }
+
+    if (operator.getXButton()) {
+      scoring.intakeUp();
     } else {
-      scoring.retract();
+      scoring.intakeDown();
     }
 
     double speedLeft = operator.getTriggerAxis(Hand.kLeft);
@@ -349,6 +384,7 @@ public class Robot extends TimedRobot {
 
     double collectionSpeed = speedRight - speedLeft;
     scoring.roll(collectionSpeed);
+    // System.out.printf("Scoring: %b %b\n", aButtonState, scoring.isExtended());
   }
 
   /**
@@ -358,6 +394,13 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     humanControl();
     log();
+    // System.out.printf("encoder ticks: %d\n",
+    // manipTalon.getSelectedSensorPosition());
+
+    // System.out.printf("Limit Switch fwd: %b\n",
+    // manipTalon.getSensorCollection().isFwdLimitSwitchClosed());
+    // System.out.printf("Limit Switch rev: %b\n",
+    // manipTalon.getSensorCollection().isRevLimitSwitchClosed());
   }
 
   @Override
@@ -375,6 +418,14 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledInit() {
-    dataLogger.close();
+    // dataLogger.close();
+  }
+
+  @Override
+  public void disabledPeriodic() {
+    // System.out.printf("Limit Switch fwd: %b\n",
+    // manipTalon.getSensorCollection().isFwdLimitSwitchClosed());
+    // System.out.printf("Limit Switch rev: %b\n",
+    // manipTalon.getSensorCollection().isRevLimitSwitchClosed());
   }
 }

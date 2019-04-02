@@ -4,6 +4,18 @@
 [log]
 level = "INFO"
 
+[manipulation]
+P = 1.0 # Not final value
+I = 0.0
+D = 0.0
+
+tolerance = 10 # +/- encoder ticks from target for considering us "on target"
+
+positions = [
+  0, # Home
+  100
+]
+
 [input]
 # Maximum turn speed (in joystick coordinates)
 maxTurn = 0.6

@@ -64,14 +64,14 @@ public class Scoring implements Loggable {
    * Pushes the intake down.
    */
   public void intakeDown() {
-    // intakePivots.set(LoggableDoubleSolenoid.Value.kForward);
+    intakePivots.set(LoggableDoubleSolenoid.Value.kForward);
   }
 
   /**
    * Pulls the intake up.
    */
   public void intakeUp() {
-    // intakePivots.set(LoggableDoubleSolenoid.Value.kReverse);
+    intakePivots.set(LoggableDoubleSolenoid.Value.kReverse);
   }
 
   /**
@@ -95,5 +95,9 @@ public class Scoring implements Loggable {
     rollerTalon.log(dl);
     pushers.log(dl);
     // intakePivots.log(dl);
+  }
+
+  public boolean isExtended() {
+    return pushers.get() == LoggableDoubleSolenoid.Value.kReverse;
   }
 }
