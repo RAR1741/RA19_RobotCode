@@ -47,31 +47,31 @@ public class Scoring implements Loggable {
   }
 
   /**
-   * Pushes the pneumatic actuators forwards.
+   * Extends the forebar (fourbar?) outwards.
    */
-  public void push() {
-    pushers.set(LoggableDoubleSolenoid.Value.kForward);
-  }
-
-  /**
-   * Pushes the pneumatic actuators back in.
-   */
-  public void retract() {
+  public void extend() {
     pushers.set(LoggableDoubleSolenoid.Value.kReverse);
   }
 
   /**
-   * Pushes the intake down.
+   * Retracts the forebar (fourbar?) inwards.
    */
-  public void intakeDown() {
-    intakePivots.set(LoggableDoubleSolenoid.Value.kForward);
+  public void retract() {
+    pushers.set(LoggableDoubleSolenoid.Value.kForward);
   }
 
   /**
-   * Pulls the intake up.
+   * Extend "finger" on scoring subsystem.
    */
-  public void intakeUp() {
+  public void flipOn() {
     intakePivots.set(LoggableDoubleSolenoid.Value.kReverse);
+  }
+
+  /**
+   * Retract "finger" on scoring subsystem.
+   */
+  public void flipOff() {
+    intakePivots.set(LoggableDoubleSolenoid.Value.kForward);
   }
 
   /**
@@ -98,6 +98,6 @@ public class Scoring implements Loggable {
   }
 
   public boolean isExtended() {
-    return pushers.get() == LoggableDoubleSolenoid.Value.kReverse;
+    return pushers.get() == LoggableDoubleSolenoid.Value.kForward;
   }
 }

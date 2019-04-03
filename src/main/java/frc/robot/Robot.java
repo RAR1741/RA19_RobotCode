@@ -139,8 +139,8 @@ public class Robot extends TimedRobot {
   }
 
   private void humanInit() {
-    scoring.push();
-    scoring.intakeDown();
+    scoring.extend();
+    scoring.flipOff();
   }
 
   /**
@@ -174,8 +174,11 @@ public class Robot extends TimedRobot {
     logger.info("Starting scoring...");
     scoring = new Scoring(new LoggableTalonSRX(9), new LoggableTalonSRX(10), new LoggableDoubleSolenoid(2, 6, 7),
         new LoggableDoubleSolenoid(2, 4, 5));
-    scoring.push();
-    scoring.intakeDown();
+
+    // Set Default position
+    scoring.extend();
+    scoring.flipOff();
+
     logger.info("Scoring started");
 
     logger.info("Starting climber...");
@@ -367,16 +370,16 @@ public class Robot extends TimedRobot {
     if (operator.getAButtonPressed()) {
       aButtonState = !aButtonState;
       if (aButtonState) {
-        scoring.retract();
+        scoring.extend();
       } else {
-        scoring.push();
+        scoring.retract();
       }
     }
 
     if (operator.getXButton()) {
-      scoring.intakeUp();
+      scoring.flipOn();
     } else {
-      scoring.intakeDown();
+      scoring.flipOff();
     }
 
     double speedLeft = operator.getTriggerAxis(Hand.kLeft);
