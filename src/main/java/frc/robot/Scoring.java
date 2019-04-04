@@ -63,14 +63,14 @@ public class Scoring implements Loggable {
   /**
    * Extend "finger" on scoring subsystem.
    */
-  public void flipOn() {
+  public void fingerDown() {
     intakePivots.set(LoggableDoubleSolenoid.Value.kReverse);
   }
 
   /**
    * Retract "finger" on scoring subsystem.
    */
-  public void flipOff() {
+  public void fingerUp() {
     intakePivots.set(LoggableDoubleSolenoid.Value.kForward);
   }
 

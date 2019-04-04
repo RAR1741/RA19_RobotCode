@@ -140,7 +140,7 @@ public class Robot extends TimedRobot {
 
   private void humanInit() {
     scoring.extend();
-    scoring.flipOff();
+    scoring.fingerUp();
   }
 
   /**
@@ -177,7 +177,7 @@ public class Robot extends TimedRobot {
 
     // Set Default position
     scoring.extend();
-    scoring.flipOff();
+    scoring.fingerUp();
 
     logger.info("Scoring started");
 
@@ -377,9 +377,9 @@ public class Robot extends TimedRobot {
     }
 
     if (operator.getXButton()) {
-      scoring.flipOn();
+      scoring.fingerDown();
     } else {
-      scoring.flipOff();
+      scoring.fingerUp();
     }
 
     double speedLeft = operator.getTriggerAxis(Hand.kLeft);
