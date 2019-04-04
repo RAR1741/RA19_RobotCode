@@ -422,6 +422,11 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     // dataLogger.close();
+    // I'm nearly 100% sure this won't work (and shoudn't work)
+    // but it can at least be tested.
+    climber.frontLiftIn();
+    climber.backLiftIn();
+    climber.driveRoll(0.0);
   }
 
   @Override
