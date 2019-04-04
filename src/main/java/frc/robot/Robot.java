@@ -172,8 +172,7 @@ public class Robot extends TimedRobot {
     configurables.add(manipulation);
 
     logger.info("Starting scoring...");
-    scoring = new Scoring(new LoggableTalonSRX(9), new LoggableTalonSRX(10), new LoggableDoubleSolenoid(2, 6, 7),
-        new LoggableDoubleSolenoid(2, 4, 5));
+    scoring = new Scoring(new LoggableDoubleSolenoid(2, 6, 7), new LoggableDoubleSolenoid(2, 4, 5));
 
     // Set Default position
     scoring.extend();
@@ -349,8 +348,6 @@ public class Robot extends TimedRobot {
 
     drive.arcadeDrive(turnInput, speedInput);
 
-    scoring.tilt(operator.getY(Hand.kRight));
-
     switch (operator.getPOV()) {
     case -1: // None
       manipulation.lift(operator.getY(Hand.kLeft));
@@ -382,11 +379,6 @@ public class Robot extends TimedRobot {
       scoring.fingerUp();
     }
 
-    double speedLeft = operator.getTriggerAxis(Hand.kLeft);
-    double speedRight = operator.getTriggerAxis(Hand.kRight);
-
-    double collectionSpeed = speedRight - speedLeft;
-    scoring.roll(collectionSpeed);
     // System.out.printf("Scoring: %b %b\n", aButtonState, scoring.isExtended());
   }
 
