@@ -349,7 +349,7 @@ public class Robot extends TimedRobot {
 
     drive.arcadeDrive(turnInput, speedInput);
 
-    scoring.tilt(operator.getY(Hand.kRight));
+    // scoring.tilt(operator.getY(Hand.kRight));
 
     switch (operator.getPOV()) {
     case -1: // None

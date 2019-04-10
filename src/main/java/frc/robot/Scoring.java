@@ -43,7 +43,7 @@ public class Scoring implements Loggable {
    * @param speed the speed to rotate the roller motor (ranges from -1.0 to 1.0)
    */
   public void roll(double speed) {
-    // rollerTalon.set(ControlMode.PercentOutput, speed);
+    rollerTalon.set(ControlMode.PercentOutput, speed);
   }
 
   /**
