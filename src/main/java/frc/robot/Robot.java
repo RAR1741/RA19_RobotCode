@@ -317,13 +317,13 @@ public class Robot extends TimedRobot {
       speedInput = inputTransformer.transformClimb(speedInput);
       climber.driveRoll(speedInput);
 
-      if (driver.getBButton()) {
+      if (driver.getYButton()) {
         climber.backLiftOut();
       } else {
         climber.backLiftIn();
       }
 
-      if (driver.getYButton()) {
+      if (driver.getBButton()) {
         climber.frontLiftOut();
       } else {
         climber.frontLiftIn();
