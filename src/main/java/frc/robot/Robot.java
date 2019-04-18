@@ -73,7 +73,7 @@ public class Robot extends TimedRobot {
   private Timer timer;
   private List<Configurable> configurables;
   private LoggableTalonSRX manipTalon;
-  private boolean aButtonState = false;
+  private boolean aButtonState = true;
 
   private VisionThread visionThread;
   private double centerX = 0.0;
@@ -123,23 +123,23 @@ public class Robot extends TimedRobot {
   }
 
   private void setupDataLogging() {
-    dataLogger.addAttribute("timer");
-    dataLogger.addAttribute("lineLeft");
-    dataLogger.addAttribute("lineCenter");
-    dataLogger.addAttribute("lineRight");
-    driver.setupLogging(dataLogger);
-    operator.setupLogging(dataLogger);
-    drive.setupLogging(dataLogger);
-    manipulation.setupLogging(dataLogger);
-    scoring.setupLogging(dataLogger);
-    climber.log(dataLogger);
-    navX.setupLogging(dataLogger);
+    // dataLogger.addAttribute("timer");
+    // dataLogger.addAttribute("lineLeft");
+    // dataLogger.addAttribute("lineCenter");
+    // dataLogger.addAttribute("lineRight");
+    // driver.setupLogging(dataLogger);
+    // operator.setupLogging(dataLogger);
+    // drive.setupLogging(dataLogger);
+    // manipulation.setupLogging(dataLogger);
+    // scoring.setupLogging(dataLogger);
+    // climber.log(dataLogger);
+    // navX.setupLogging(dataLogger);
 
-    dataLogger.writeAttributes();
+    // dataLogger.writeAttributes();
   }
 
   private void humanInit() {
-    scoring.extend();
+    scoring.retract();
     scoring.fingerUp();
   }
 
@@ -368,6 +368,10 @@ public class Robot extends TimedRobot {
     }
 
     if (operator.getAButtonPressed()) {
+      // some miscellaneous change that no one knows about:
+      // scoring.extend and scoring.retract got their k values switched around
+      // and aButtonState is now true by default. Fixes problems with
+      // forebar flipping out and hitting someone
       aButtonState = !aButtonState;
       if (aButtonState) {
         scoring.extend();
@@ -386,7 +390,15 @@ public class Robot extends TimedRobot {
     double speedRight = operator.getTriggerAxis(Hand.kRight);
 
     double collectionSpeed = speedRight - speedLeft;
-    scoring.roll(collectionSpeed);
+
+    if (!manipTalon.getSensorCollection().isRevLimitSwitchClosed()) {
+      if (collectionSpeed < 0) {
+        collectionSpeed *= 0.5;
+      }
+
+      scoring.roll(collectionSpeed);
+    }
+
     // System.out.printf("Scoring: %b %b\n", aButtonState, scoring.isExtended());
   }
 

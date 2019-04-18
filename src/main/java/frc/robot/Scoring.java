@@ -50,14 +50,14 @@ public class Scoring implements Loggable {
    * Extends the forebar (fourbar?) outwards.
    */
   public void extend() {
-    pushers.set(LoggableDoubleSolenoid.Value.kReverse);
+    pushers.set(LoggableDoubleSolenoid.Value.kForward);
   }
 
   /**
    * Retracts the forebar (fourbar?) inwards.
    */
   public void retract() {
-    pushers.set(LoggableDoubleSolenoid.Value.kForward);
+    pushers.set(LoggableDoubleSolenoid.Value.kReverse);
   }
 
   /**

@@ -86,10 +86,10 @@ public class Drivetrain implements Loggable {
   /**
    * Drives the robot with an tank style drive
    *
-   * @param xDrive The speed to drive the left drivetrain (ranges
-   *               from -1.0 to +1.0)
-   * @param yDrive The speed to drive the right drivetrain (ranges
-   *               from -1.0 to +1.0)
+   * @param xDrive The speed to drive the left drivetrain (ranges from -1.0 to
+   *               +1.0)
+   * @param yDrive The speed to drive the right drivetrain (ranges from -1.0 to
+   *               +1.0)
    */
   public void tankDrive(double leftDrive, double rightDrive) {
     this.driveLeft(leftDrive);
