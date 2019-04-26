@@ -141,7 +141,7 @@ public class Drivetrain implements Loggable {
    *                          straight, -1 = turning)
    */
   public void drivePControl(double error, double maxMotorPercent, int isDrivingStraight) {
-    double motorPower = maxMotorPercent * error * P;
+    double motorPower = maxMotorPercent * error;
     driveLeft(motorPower);
     driveRight(motorPower * isDrivingStraight);
   }

@@ -106,9 +106,9 @@ public class AutoLineup {
        * Turns robot to face the target.
        */
       case TURNING:
-        error = (90 - navx.getYaw()) * P;
+        error = getDistanceDiff() * P;
         drive.drivePControl(error, 0.8, -1);
-        if (error >= -1 || error <= 1){
+        if (error >= -0.5 || error <= 0.5){
           state = AutoLineupState.LINE;
         }
         break;
@@ -138,6 +138,12 @@ public class AutoLineup {
     return (sensorL.getDistance() + sensorR.getDistance()) / 2;
   }
 
+  /**
+   * Uses two ultrasonic sensors to determine the difference between the two.
+   */
+  private double getDistanceDiff() {
+    return (sensorL.getDistance() - sensorR.getDistance());
+  }
   /*
     double turn = centerX - (IMG_WIDTH/2);
     double cameraDegree = turn/(IMG_WIDTH/CAM_FOV);
