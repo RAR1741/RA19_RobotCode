@@ -95,7 +95,7 @@ public class AutoLineup {
        * Drives robot distance of designated path.
        */
       case DRIVING:
-        error = (pathDistance - directDistance) * P;
+        error = (pathDistance - directDistance) * P; // TODO Error won't change while moving
         drive.drivePControl(error, 0.8, 1);
         if (error >= -1 || error <= 1){
           state = AutoLineupState.TURNING;
